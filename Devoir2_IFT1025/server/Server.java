@@ -84,21 +84,39 @@ public class Server {
     }
 
     /**
-     Lire un fichier texte contenant des informations sur les cours et les transformer en liste d'objets 'Course'.
+     Lire un fichier texte contenant des informations sur les cours et les transforme en liste d'objets 'Course'.
      La méthode filtre les cours par la session spécifiée en argument.
      Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String arg) {
-        FileReader fichierCours = new FileReader("cours");
+        FileReader fileCourse = new FileReader("cour");
         
-        BufferedReader cours = new BufferedReader(fichierCours);
-        String ligne;
-        while ((ligne = cours.readLine()) != null) {
-            sigleCour = ligne.split("   ")[0];
-            nomCour = ligne.split("   ")[1].split("   ");
-            sessionCour = ligne.split("   ")[2];
+        BufferedReader courses = new BufferedReader(fileCourse);
+        
+        String line;
+        listCoursesFall = new ArrayList<Course>();
+        listCoursesWinter = new ArrayList<Course>();
+        listCoursesSummer = new ArrayList<Course>();
+        
+        while ((line = courses.readLine()) != null) {
+            codeCourse = line.split("   ")[0];
+            nameCourse = line.split("   ")[1].split("   ");
+            sessionCourse = line.split("   ")[2];
+            
+            Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
+            
+            if (sessionCourse == "Automne") {
+                listCoursesFall.add(newCourse);
+            }
+            else if (sessionCourse == "Hiver") {
+                listCourseWinter.add(newCourse);
+            }
+            else if (sessionCourse == "Ete") {
+                listCourseSummer.add(newCourse);
+            }
+            
         }
     }
 
