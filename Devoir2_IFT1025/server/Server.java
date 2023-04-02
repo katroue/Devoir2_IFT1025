@@ -90,7 +90,7 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) {
+    public void handleLoadCourses(String arg) throw IOException, IllegalArgumentException {
         FileReader fileCourse = new FileReader("cour");
         
         BufferedReader courses = new BufferedReader(fileCourse);
@@ -118,6 +118,8 @@ public class Server {
             }
             
         }
+        
+        courses.close();
     }
 
     /**
