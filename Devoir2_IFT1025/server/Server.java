@@ -84,14 +84,22 @@ public class Server {
     }
 
     /**
-     Lire un fichier texte contenant des informations sur les cours et les transofmer en liste d'objets 'Course'.
+     Lire un fichier texte contenant des informations sur les cours et les transformer en liste d'objets 'Course'.
      La méthode filtre les cours par la session spécifiée en argument.
      Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String arg) {
-        // TODO: implémenter cette méthode
+        FileReader fichierCours = new FileReader("cours");
+        
+        BufferedReader cours = new BufferedReader(fichierCours);
+        String ligne;
+        while ((ligne = cours.readLine()) != null) {
+            sigleCour = ligne.split("   ")[0];
+            nomCour = ligne.split("   ")[1].split("   ");
+            sessionCour = ligne.split("   ")[2];
+        }
     }
 
     /**
