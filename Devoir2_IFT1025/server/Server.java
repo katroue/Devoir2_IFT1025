@@ -91,7 +91,7 @@ public class Server {
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String arg) throw IOException, IllegalArgumentException {
-        FileReader fileCourse = new FileReader("cour");
+        FileReader fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
         
         BufferedReader courses = new BufferedReader(fileCourse);
         
