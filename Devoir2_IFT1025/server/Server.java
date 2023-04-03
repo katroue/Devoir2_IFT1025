@@ -2,9 +2,7 @@ package server;
 
 import javafx.util.Pair;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -75,7 +73,7 @@ public class Server {
         client.close();
     }
 
-    public void handleEvents(String cmd, String arg) {
+    public void handleEvents(String cmd, String arg) throws IOException {
         if (cmd.equals(REGISTER_COMMAND)) {
             handleRegistration();
         } else if (cmd.equals(LOAD_COMMAND)) {
@@ -90,7 +88,7 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) throw IOException, IllegalArgumentException {
+    public void handleLoadCourses(String arg) throws IOException {
         FileReader fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
         
         BufferedReader courses = new BufferedReader(fileCourse);
