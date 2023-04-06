@@ -1,6 +1,8 @@
 package server;
 
 import javafx.util.Pair;
+import jdk.internal.icu.text.UnicodeSet;
+import server.models.Course;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;
@@ -90,20 +92,20 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) throw IOException, IllegalArgumentException {
+    public void handleLoadCourses(String arg) throw IOException {
         FileReader fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
         
         BufferedReader courses = new BufferedReader(fileCourse);
         
         String line;
-        listCoursesFall = new ArrayList<Course>();
-        listCoursesWinter = new ArrayList<Course>();
-        listCoursesSummer = new ArrayList<Course>();
+        ArrayList<Course> listCoursesFall = new ArrayList<Course>();
+        ArrayList<Course> listCoursesWinter = new ArrayList<Course>();
+        ArrayList<Course> listCoursesSummer = new ArrayList<Course>();
         
         while ((line = courses.readLine()) != null) {
-            codeCourse = line.split("   ")[0];
-            nameCourse = line.split("   ")[1].split("   ");
-            sessionCourse = line.split("   ")[2];
+            String codeCourse = line.split("   ")[0];
+            String nameCourse = Arrays.toString(line.split("   ")[1].split("   "));
+            String sessionCourse = line.split("   ")[2];
             
             Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
             
@@ -111,10 +113,10 @@ public class Server {
                 listCoursesFall.add(newCourse);
             }
             else if (sessionCourse == "Hiver") {
-                listCourseWinter.add(newCourse);
+                listCoursesWinter.add(newCourse);
             }
             else if (sessionCourse == "Ete") {
-                listCourseSummer.add(newCourse);
+                listCoursesSummer.add(newCourse);
             }
             
         }
