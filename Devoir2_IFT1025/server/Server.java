@@ -4,13 +4,12 @@ import javafx.util.Pair;
 import jdk.internal.icu.text.UnicodeSet;
 import server.models.Course;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Server {
 
@@ -92,42 +91,78 @@ public class Server {
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
-    public void handleLoadCourses(String arg) throw IOException {
-        FileReader fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
-        
+    public void handleLoadCourses(String arg) throws IOException {
+        FileReader fileCourse = null;
+        try {
+            fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         BufferedReader courses = new BufferedReader(fileCourse);
-        
+
+        ArrayList<Course> listAllCourses = new ArrayList<>();
+
+        ObjectOutputStream listCoursesAsked = new ObjectOutputStream(listAllCourses);
+
         String line;
+        while ((line = courses.readLine()) != null) {
+            String codeCourse = line.split("   ")[0];
+            String nameCourse = Arrays.toString(line.split("   ")[1].split("   "));
+            String sessionCourse = line.split("   ")[2];
+            if (sessionCourse == arg) {
+                Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
+                listCoursesAsked.writeObject(newCourse);
+            }
+        }
+        listCoursesAsked.close();
+    }
+        
+        /*String line;
         ArrayList<Course> listCoursesFall = new ArrayList<Course>();
         ArrayList<Course> listCoursesWinter = new ArrayList<Course>();
         ArrayList<Course> listCoursesSummer = new ArrayList<Course>();
         
-        while ((line = courses.readLine()) != null) {
+        while (true) {
+            try {
+                if ((line = courses.readLine()) == null) break;
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             String codeCourse = line.split("   ")[0];
             String nameCourse = Arrays.toString(line.split("   ")[1].split("   "));
             String sessionCourse = line.split("   ")[2];
             
             Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
             
-            if (sessionCourse == "Automne") {
+            if (Objects.equals(sessionCourse, "Automne")) {
                 listCoursesFall.add(newCourse);
             }
-            else if (sessionCourse == "Hiver") {
+            else if (Objects.equals(sessionCourse, "Hiver")) {
                 listCoursesWinter.add(newCourse);
             }
-            else if (sessionCourse == "Ete") {
+            else if (Objects.equals(sessionCourse, "Ete")) {
                 listCoursesSummer.add(newCourse);
             }
             
+        }*/
+
+        /*if (arg == "Fall") {
+            listCoursesFall.forEach((cours) -> finalFileGiven.writeObject(cours));
         }
-        
-        courses.close();
-    }
+        else if (arg == "Winter") {
+            listCoursesWinter.forEach((cours) -> finalFileGiven.writeObject(cours));
+        }
+        else if (arg == "Summer") {
+            listCoursesSummer.forEach((cours) -> finalFileGiven.writeObject(cours));
+        }*/
+
+
 
     /**
      Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
-     La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
+     La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
     public void handleRegistration() {
         // TODO: implémenter cette méthode
