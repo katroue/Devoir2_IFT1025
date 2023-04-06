@@ -76,7 +76,7 @@ public class Server {
         client.close();
     }
 
-    public void handleEvents(String cmd, String arg) {
+    public void handleEvents(String cmd, String arg) throws IOException {
         if (cmd.equals(REGISTER_COMMAND)) {
             handleRegistration();
         } else if (cmd.equals(LOAD_COMMAND)) {
@@ -107,64 +107,61 @@ public class Server {
 
         String line;
         while ((line = courses.readLine()) != null) {
-            String codeCourse = line.split("   ")[0];
-            String nameCourse = Arrays.toString(line.split("   ")[1].split("   "));
-            String sessionCourse = line.split("   ")[2];
-            if (sessionCourse == arg) {
-                Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
+            String codeCourse = line.split("\t")[0];
+            String nameCourse = Arrays.toString(line.split("\t")[1].split("\t"));
+            String sessionCourse = line.split("\t")[2];
+            Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
+
+            if (Objects.equals(sessionCourse, arg)) {
                 listCoursesAsked.writeObject(newCourse);
             }
         }
         listCoursesAsked.close();
     }
-        
-        /*String line;
-        ArrayList<Course> listCoursesFall = new ArrayList<Course>();
-        ArrayList<Course> listCoursesWinter = new ArrayList<Course>();
-        ArrayList<Course> listCoursesSummer = new ArrayList<Course>();
-        
-        while (true) {
-            try {
-                if ((line = courses.readLine()) == null) break;
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-            String codeCourse = line.split("   ")[0];
-            String nameCourse = Arrays.toString(line.split("   ")[1].split("   "));
-            String sessionCourse = line.split("   ")[2];
-            
-            Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
-            
-            if (Objects.equals(sessionCourse, "Automne")) {
-                listCoursesFall.add(newCourse);
-            }
-            else if (Objects.equals(sessionCourse, "Hiver")) {
-                listCoursesWinter.add(newCourse);
-            }
-            else if (Objects.equals(sessionCourse, "Ete")) {
-                listCoursesSummer.add(newCourse);
-            }
-            
-        }*/
-
-        /*if (arg == "Fall") {
-            listCoursesFall.forEach((cours) -> finalFileGiven.writeObject(cours));
-        }
-        else if (arg == "Winter") {
-            listCoursesWinter.forEach((cours) -> finalFileGiven.writeObject(cours));
-        }
-        else if (arg == "Summer") {
-            listCoursesSummer.forEach((cours) -> finalFileGiven.writeObject(cours));
-        }*/
-
-
 
     /**
      Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
      La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public void handleRegistration() {
-        // TODO: implémenter cette méthode
+    public void handleRegistration() throws IOException {
+        ObjectInputStream newRegistration = new ObjectInputStream(RegistrationForm);
+
+        String surnameStudent = newRegistration.getPrenom();
+        String lastNameStudent = newRegistration.getName();
+        String emailStudent = newRegistration.getEmail();
+        String matriculeStudent = newRegistration.getMatricule();
+        String courseWanted = newRegistration.getCourse();
+
+        FileReader fileCourse = null;
+        try {
+            fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        BufferedReader courses = new BufferedReader(fileCourse);
+
+        String line;
+        String courseWantedCode = null;
+        String courseWantedSession = null;
+
+        while ((line = courses.readLine()) != null) {
+            String codeCourse = line.split("\t")[0];
+            String nameCourse = Arrays.toString(line.split("\t")[1].split("\t"));
+            String sessionCourse = line.split("\t")[2];
+            if (Objects.equals(courseWanted, nameCourse)) {
+                courseWantedCode = codeCourse;
+                courseWantedSession = sessionCourse;
+            }
+        }
+
+        FileWriter inscriptions = new FileWriter("data/inscription.txt");
+
+        BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptions);
+
+        String nouvelleLigneInscription = courseWantedSession + "\t" + courseWantedCode + "\t" +
+                matriculeStudent + "\t" + lastNameStudent + "\t" + surnameStudent + "\t" + emailStudent;
+
+        inscriptionsUpdated.append(nouvelleLigneInscription);
     }
 }
