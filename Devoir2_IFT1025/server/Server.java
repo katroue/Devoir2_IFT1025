@@ -163,5 +163,7 @@ public class Server {
                 matriculeStudent + "\t" + lastNameStudent + "\t" + surnameStudent + "\t" + emailStudent;
 
         inscriptionsUpdated.append(nouvelleLigneInscription);
+
+        inscriptionsUpdated.close();
     }
 }
