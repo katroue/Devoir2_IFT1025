@@ -131,7 +131,7 @@ public class Server {
         String lastNameStudent = newRegistration.getName();
         String emailStudent = newRegistration.getEmail();
         String matriculeStudent = newRegistration.getMatricule();
-        String courseWanted = newRegistration.getCourse();
+        String courseWantedName = newRegistration.getCourse();
 
         FileReader fileCourse = null;
         try {
@@ -146,12 +146,12 @@ public class Server {
         String courseWantedSession = null;
 
         while ((line = courses.readLine()) != null) {
-            String codeCourse = line.split("\t")[0];
-            String nameCourse = Arrays.toString(line.split("\t")[1].split("\t"));
-            String sessionCourse = line.split("\t")[2];
-            if (Objects.equals(courseWanted, nameCourse)) {
-                courseWantedCode = codeCourse;
-                courseWantedSession = sessionCourse;
+            String codeCourseAvailable = line.split("\t")[0];
+            String nameCourseAvailable = Arrays.toString(line.split("\t")[1].split("\t"));
+            String sessionCourseAbailable = line.split("\t")[2];
+            if (Objects.equals(courseWantedName, nameCourseAvailable)) {
+                courseWantedCode = codeCourseAvailable;
+                courseWantedSession = sessionCourseAvailable;
             }
         }
 
