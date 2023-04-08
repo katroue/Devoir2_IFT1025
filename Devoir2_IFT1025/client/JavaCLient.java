@@ -20,9 +20,8 @@ public class main(String [] args) {
          }
          
          wirter.close();
-        } catch (IOException ex) {
+     } catch (IOException ex) {
             ex.printStackTrace();
-        }
-    }
-    
+     }
+  }
 }
