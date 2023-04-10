@@ -19,7 +19,7 @@ public class main(String [] args) {
              writer.flush();
          }
          
-         wirter.close();
+         writer.close();
      } catch (IOException ex) {
             ex.printStackTrace();
      }
