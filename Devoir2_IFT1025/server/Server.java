@@ -1,12 +1,16 @@
 package server;
 
 import javafx.util.Pair;
+import jdk.internal.icu.text.UnicodeSet;
+import server.models.Course;
+import server.models.RegistrationForm;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Server {
 
@@ -28,7 +32,7 @@ public class Server {
         this.handlers.add(h);
     }
 
-    private void alertHandlers(String cmd, String arg) {
+    private void alertHandlers(String cmd, String arg) throws IOException {
         for (EventHandler h : this.handlers) {
             h.handle(cmd, arg);
         }
@@ -89,43 +93,80 @@ public class Server {
      @param arg la session pour laquelle on veut récupérer la liste des cours
      */
     public void handleLoadCourses(String arg) throws IOException {
-        FileReader fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
-        
-        BufferedReader courses = new BufferedReader(fileCourse);
-        
-        String line;
-        listCoursesFall = new ArrayList<Course>();
-        listCoursesWinter = new ArrayList<Course>();
-        listCoursesSummer = new ArrayList<Course>();
-        
-        while ((line = courses.readLine()) != null) {
-            codeCourse = line.split("   ")[0];
-            nameCourse = line.split("   ")[1].split("   ");
-            sessionCourse = line.split("   ")[2];
-            
-            Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
-            
-            if (sessionCourse == "Automne") {
-                listCoursesFall.add(newCourse);
-            }
-            else if (sessionCourse == "Hiver") {
-                listCourseWinter.add(newCourse);
-            }
-            else if (sessionCourse == "Ete") {
-                listCourseSummer.add(newCourse);
-            }
-            
+        FileReader fileCourse = null;
+        try {
+            fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+
         }
-        
-        courses.close();
+
+        BufferedReader courses = new BufferedReader(fileCourse);
+
+        ArrayList<Course> listAllCourses = new ArrayList<>();
+
+        ObjectOutputStream listCoursesAsked = new ObjectOutputStream(listAllCourses);
+
+        String line;
+        while ((line = courses.readLine()) != null) {
+            String codeCourse = line.split("\t")[0];
+            String nameCourse = Arrays.toString(line.split("\t")[1].split("\t"));
+            String sessionCourse = line.split("\t")[2];
+            Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
+
+            if (Objects.equals(sessionCourse, arg)) {
+                listCoursesAsked.writeObject(newCourse);
+            }
+        }
+        listCoursesAsked.close();
     }
 
     /**
      Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
-     La méthode gére les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
+     La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public void handleRegistration() {
-        // TODO: implémenter cette méthode
+    public void handleRegistration() throws IOException {
+            InputStream RegistrationForm = null;
+            ObjectInputStream newRegistration = new ObjectInputStream(RegistrationForm);
+
+        String surnameStudent = newRegistration.getPrenom();
+        String lastNameStudent = newRegistration.getName();
+        String emailStudent = newRegistration.getEmail();
+        String matriculeStudent = newRegistration.getMatricule();
+        String courseWantedName = newRegistration.getCourse();
+
+        FileReader fileCourse = null;
+        try {
+            fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+        BufferedReader courses = new BufferedReader(fileCourse);
+
+        String lineCourses;
+        String courseWantedCode = null;
+        String courseWantedSession = null;
+
+        while ((lineCourses = courses.readLine()) != null) {
+            String codeCourseAvailable = lineCourses.split("\t")[0];
+            String nameCourseAvailable = Arrays.toString(lineCourses.split("\t")[1].split("\t"));
+            String sessionCourseAvailable = lineCourses.split("\t")[2];
+            if (Objects.equals(courseWantedName, nameCourseAvailable)) {
+                courseWantedCode = codeCourseAvailable;
+                courseWantedSession = sessionCourseAvailable;
+            }
+        }
+
+        FileWriter inscriptions = new FileWriter("data/inscription.txt");
+
+        BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptions);
+
+        String nouvelleLigneInscription = courseWantedSession + "\t" + courseWantedCode + "\t" +
+                matriculeStudent + "\t" + lastNameStudent + "\t" + surnameStudent + "\t" + emailStudent;
+
+        inscriptionsUpdated.append(nouvelleLigneInscription);
+
+        inscriptionsUpdated.close();
     }
 }
