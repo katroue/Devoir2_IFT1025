@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Server {
+public class Server<Pair> {
 
     public final static String REGISTER_COMMAND = "INSCRIRE";
     public final static String LOAD_COMMAND = "CHARGER";
