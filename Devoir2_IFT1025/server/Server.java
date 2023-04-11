@@ -180,7 +180,7 @@ public class Server<Pair> {
             ObjectInputStream newRegistration = new ObjectInputStream(RegistrationForm form);
 
         String surnameStudent = newRegistration.getPrenom();
-        String lastNameStudent = newRegistration.getNamee();
+        String lastNameStudent = newRegistration.getName();
         String emailStudent = newRegistration.getEmail();
         String matriculeStudent = newRegistration.getMatricule();
         String courseWantedName = newRegistration.getCourse();
