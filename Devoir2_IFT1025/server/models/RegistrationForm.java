@@ -9,6 +9,15 @@ public class RegistrationForm implements Serializable {
     private String matricule;
     private Course course;
 
+    /**
+     *
+     * @param prenom
+     * @param nom
+     * @param email
+     * @param matricule
+     * @param course
+     */
+
     public RegistrationForm(String prenom, String nom, String email, String matricule, Course course) {
         this.prenom = prenom;
         this.nom = nom;
@@ -56,6 +65,11 @@ public class RegistrationForm implements Serializable {
     public void setCourse(Course course) {
         this.course = course;
     }
+
+    /**
+     *
+     * @return
+     */
 
     @Override
     public String toString() {

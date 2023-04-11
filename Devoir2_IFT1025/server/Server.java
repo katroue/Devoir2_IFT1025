@@ -1,6 +1,6 @@
 package server;
 
-import javafx.util.Pair;
+import java.io.*;
 import jdk.internal.icu.text.UnicodeSet;
 import server.models.Course;
 import server.models.RegistrationForm;
@@ -22,21 +22,43 @@ public class Server<Pair> {
     private ObjectOutputStream objectOutputStream;
     private final ArrayList<EventHandler> handlers;
 
+    /**
+     *
+     * @param port
+     * @throws IOException
+     */
+
     public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
         this.handlers = new ArrayList<EventHandler>();
         this.addEventHandler(this::handleEvents);
     }
 
+    /**
+     *
+     * @param h
+     */
+
     public void addEventHandler(EventHandler h) {
         this.handlers.add(h);
     }
+
+    /**
+     *
+     * @param cmd
+     * @param arg
+     * @throws IOException
+     */
 
     private void alertHandlers(String cmd, String arg) throws IOException {
         for (EventHandler h : this.handlers) {
             h.handle(cmd, arg);
         }
     }
+
+    /**
+     *
+     */
 
     public void run() {
         while (true) {
@@ -54,6 +76,12 @@ public class Server<Pair> {
         }
     }
 
+    /**
+     *
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
+
     public void listen() throws IOException, ClassNotFoundException {
         String line;
         if ((line = this.objectInputStream.readObject().toString()) != null) {
@@ -64,6 +92,12 @@ public class Server<Pair> {
         }
     }
 
+    /**
+     *
+     * @param line
+     * @return
+     */
+
     public Pair<String, String> processCommandLine(String line) {
         String[] parts = line.split(" ");
         String cmd = parts[0];
@@ -71,11 +105,22 @@ public class Server<Pair> {
         return new Pair<>(cmd, args);
     }
 
+    /**
+     *
+     * @throws IOException
+     */
     public void disconnect() throws IOException {
         objectOutputStream.close();
         objectInputStream.close();
         client.close();
     }
+
+    /**
+     *
+     * @param cmd
+     * @param arg
+     * @throws IOException
+     */
 
     public void handleEvents(String cmd, String arg) throws IOException {
         if (cmd.equals(REGISTER_COMMAND)) {
@@ -95,7 +140,7 @@ public class Server<Pair> {
     public void handleLoadCourses(String arg) throws IOException {
         FileReader fileCourse = null;
         try {
-            fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
+            fileCourse = new FileReader("data/cour.txt");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
 
