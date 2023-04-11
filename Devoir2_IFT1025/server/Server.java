@@ -187,7 +187,7 @@ public class Server<Pair> {
 
         FileReader fileCourse = null;
         try {
-            fileCourse = new FileReader("data/cour.txt"); // je suis pas sur comment appelé le fichier cour
+            fileCourse = new FileReader("data/cour.txt");
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
         }
