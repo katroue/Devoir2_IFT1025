@@ -18,8 +18,8 @@ public class JavaCLient {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Socket clientSocket = new Socket("127.0.0.1", 1337);
 
-        //OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream());
-        //BufferedWriter writer = new BufferedWriter(os);
+        // OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream());
+        // BufferedWriter writer = new BufferedWriter(os);
 
         Scanner scanner = new Scanner(System.in);
         String line = scanner.nextLine();
@@ -30,15 +30,14 @@ public class JavaCLient {
         if (cmd == "CHARGER") {
             ObjectInputStream listAvailableCoursesSession = new ObjectInputStream(clientSocket.getInputStream());
             ArrayList<Course> coursesSessionWanted = (ArrayList<Course>) listAvailableCoursesSession.readObject();
-            for (int i=0; i<coursesSessionWanted.length; i++) {
-                courseName[i] = coursesSessionWanted[i].getName();
-            }
-            //Course coursesSessionWanted = (Course) listAvailableCoursesSession.readObject();
-            String courseName = coursesSessionWanted.getName();
 
-            System.out.println("*** Bienvenue au portail d'inscription de cours de l<UDEM ***");
+            System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
             System.out.println(("Voici les cours disponibles pour la session d'" + sessionWanted));
-            coursesSessionWanted.forEach((courses) -> System.out.println("- " + courseName));
+            coursesSessionWanted.forEach((courses) -> System.out.println("- " + courses.getCode() + "/t" +
+                    courses.getName() + "/t"));
+        } else if (cmd == "INSCRIRE") {
+            System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
+            
         }
     }
 }
