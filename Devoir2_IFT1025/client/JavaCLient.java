@@ -3,6 +3,8 @@ package client;
 import java.io.*;
 
 import server.models.Course;
+import server.models.RegistrationForm;
+
 import java.util.ArrayList;
 import java.net.Socket;
 import java.util.Arrays;
@@ -77,7 +79,45 @@ public class JavaCLient {
                 writer.flush();
             }
 
+            ObjectInputStream listCoursesAsked = new ObjectInputStream(clientSocket.getInputStream());
+            ArrayList<Course> coursesSessionWanted = (ArrayList<Course>) listCoursesAsked.readObject();
 
+            System.out.println("Les cours offerts pendant la session d'" + choiceSession + "sont:");
+            coursesSessionWanted.forEach((course) -> System.out.println("- " + course.getCode() + "/t" +
+                    course.getName()));
+            System.out.println("1. Consulter les cours offerts pour une autre session");
+            System.out.println("2. Inscription à un cour");
+            int choiceEvent = scanner.nextInt();
+
+            if (choiceEvent == 1) {
+                // TO-DO
+            } else if (choiceEvent == 2) {
+                System.out.println("Veuillez saisir votre prénom: ");
+                String surnameStudent = scanner.nextLine();
+                System.out.println("Veuillez saisir votre nom: ");
+                String nameStudent = scanner.nextLine();
+                System.out.println("Veuillez saisir votre email: ");
+                String emailStudent = scanner.nextLine();
+                System.out.println("Veuillez saisir votre matricule: ");
+                String matriculeStudent = scanner.nextLine();
+                System.out.println("Veuillez saisir le code du cour: ");
+                int codeCourseRegistered = scanner.nextInt();
+
+                for (Course coursesListttt  : coursesSessionWanted) {
+                    if (coursesListttt.getCode() == codeCourseRegistered) {
+                        RegistrationForm newRegistrationForm = new RegistrationForm(surnameStudent, nameStudent,
+                                emailStudent, matriculeStudent, new Course(coursesListttt.getName(),
+                                coursesListttt.getCode(), coursesListttt.getSession()));
+                    }
+                }
+
+                String commande = "INSCRIRE";
+                writer.append(commande);
+                writer.flush();
+
+                ObjectOutputStream os = new ObjectOutputStream(clientSocket.getOutputStream());
+                os.writeObject(newRegistrationForm);
+            }
             }
         }
     }
