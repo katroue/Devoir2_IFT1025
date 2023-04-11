@@ -149,20 +149,24 @@ public class Server<Pair> {
         BufferedReader courses = new BufferedReader(fileCourse);
 
         ArrayList<Course> listAllCourses = new ArrayList<>();
-
-        ObjectOutputStream listCoursesAsked = new ObjectOutputStream(listAllCourses);
+        
+        FileOutputStream fos = new FileOutputStream("coursesData");
+        ObjectOutputStream listCoursesAsked = new ObjectOutputStream(fos);
 
         String line;
         while ((line = courses.readLine()) != null) {
             String codeCourse = line.split("\t")[0];
             String nameCourse = Arrays.toString(line.split("\t")[1].split("\t"));
             String sessionCourse = line.split("\t")[2];
+            
             Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
 
             if (Objects.equals(sessionCourse, arg)) {
-                listCoursesAsked.writeObject(newCourse);
+                listAllCourses.add(newCourse);
             }
         }
+        listCoursesAsked.writeObject(listAllCourses);
+        
         listCoursesAsked.close();
     }
 
