@@ -177,7 +177,7 @@ public class Server<Pair> {
      */
     public void handleRegistration() throws IOException {
             InputStream RegistrationForm = null;
-            ObjectInputStream newRegistration = new ObjectInputStream(RegistrationForm);
+            ObjectInputStream newRegistration = new ObjectInputStream(RegistrationForm form);
 
         String surnameStudent = newRegistration.getPrenom();
         String lastNameStudent = newRegistration.getName();
