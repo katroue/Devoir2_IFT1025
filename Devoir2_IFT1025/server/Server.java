@@ -183,8 +183,9 @@ public class Server<Pair> {
         String lastNameStudent = newRegistration.getName();
         String emailStudent = newRegistration.getEmail();
         String matriculeStudent = newRegistration.getMatricule();
-        String courseWantedName = newRegistration.getCourse();
+        String courseWantedName = newRegistration.getCourse().getName();
 
+        /*
         FileReader fileCourse = null;
         try {
             fileCourse = new FileReader("data/cour.txt");
@@ -193,29 +194,30 @@ public class Server<Pair> {
         }
         BufferedReader courses = new BufferedReader(fileCourse);
 
-        String lineCourses;
+        String line;
         String courseWantedCode = null;
         String courseWantedSession = null;
 
-        while ((lineCourses = courses.readLine()) != null) {
-            String codeCourseAvailable = lineCourses.split("\t")[0];
-            String nameCourseAvailable = Arrays.toString(lineCourses.split("\t")[1].split("\t"));
-            String sessionCourseAvailable = lineCourses.split("\t")[2];
+        while ((line = courses.readLine()) != null) {
+            String codeCourseAvailable = line.split("\t")[0];
+            String nameCourseAvailable = Arrays.toString(line.split("\t")[1].split("\t"));
+            String sessionCourseAvailable = line.split("\t")[2];
             if (Objects.equals(courseWantedName, nameCourseAvailable)) {
                 courseWantedCode = codeCourseAvailable;
                 courseWantedSession = sessionCourseAvailable;
             }
         }
+        */
 
-        FileWriter inscriptions = new FileWriter("data/inscription.txt");
+        FileWriter inscriptionList = new FileWriter("data/inscription.txt");
 
-        BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptions);
+        BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptionList);
 
         String nouvelleLigneInscription = courseWantedSession + "\t" + courseWantedCode + "\t" +
                 matriculeStudent + "\t" + lastNameStudent + "\t" + surnameStudent + "\t" + emailStudent;
 
-        inscriptionsUpdated.append(nouvelleLigneInscription);
+        inscriptionListUpdated.append(nouvelleLigneInscription);
 
-        inscriptionsUpdated.close();
+        inscriptionListUpdated.close();
     }
 }
