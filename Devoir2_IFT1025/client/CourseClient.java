@@ -1,14 +1,14 @@
-package server.models;
+package client;
 
 import java.io.Serializable;
 
-public class Course implements Serializable {
+public class CourseClient implements Serializable {
 
     private String name;
     private String code;
     private String session;
 
-    public Course(String name, String code, String session) {
+    public CourseClient(String name, String code, String session) {
         this.name = name;
         this.code = code;
         this.session = session;

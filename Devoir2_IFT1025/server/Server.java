@@ -1,7 +1,6 @@
 package server;
 
 import java.io.*;
-import jdk.internal.icu.text.UnicodeSet;
 import server.models.Course;
 import server.models.RegistrationForm;
 
@@ -122,7 +121,7 @@ public class Server<Pair> {
      * @throws IOException
      */
 
-    public void handleEvents(String cmd, String arg) throws IOException {
+    public void handleEvents(String cmd, String arg) throws IOException, ClassNotFoundException {
         if (cmd.equals(REGISTER_COMMAND)) {
             handleRegistration();
         } else if (cmd.equals(LOAD_COMMAND)) {

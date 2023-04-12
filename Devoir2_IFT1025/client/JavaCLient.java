@@ -1,123 +1,98 @@
 package client;
 
 import java.io.*;
-
-import server.models.Course;
-import server.models.RegistrationForm;
-
-import java.util.ArrayList;
+import client.Course;
+import client.RegistrationForm;
 import java.net.Socket;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Scanner;
-
-/**
- *
- */
 
 public class JavaCLient {
     public static void main(String[] args) throws IOException, ClassNotFoundException {
         Socket clientSocket = new Socket("127.0.0.1", 1337);
 
-        // OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream());
-        // BufferedWriter writer = new BufferedWriter(os);
+        ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
+        ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
+
+        boolean clientConnected = true;
 
         Scanner scanner = new Scanner(System.in);
-        String line = scanner.nextLine();
-        String[] parts = line.split(" ");
-        String cmd = parts[0];
 
-        if (cmd == "CHARGER") {
-            String sessionWanted = String.join(" ", Arrays.asList(parts).subList(1, parts.length));
+        // Pour pouvoir revenir en arrière facilement
+        int stepEvent = 1;
 
-            ObjectInputStream listAvailableCoursesSession = new ObjectInputStream(clientSocket.getInputStream());
-            ArrayList<Course> coursesSessionWanted = (ArrayList<Course>) listAvailableCoursesSession.readObject();
-
-            System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
-            System.out.println(("Voici les cours disponibles pour la session d'" + sessionWanted));
-            coursesSessionWanted.forEach((courses) -> System.out.println("- " + courses.getCode() + "/t" +
-                    courses.getName() + "/t"));
-        } else if (cmd == "INSCRIRE") {
-            FileReader fileCourse = null;
-            try {
-                fileCourse = new FileReader("data/cour.txt");
-            } catch (FileNotFoundException e) {
-                throw new RuntimeException(e);
-
-            }
-
-            BufferedReader courses = new BufferedReader(fileCourse);
-
-            String lineCoursesAvailable;
-            while ((lineCoursesAvailable = courses.readLine()) != null) {
-                String codeCourse = lineCoursesAvailable.split("\t")[0];
-                String nameCourse = Arrays.toString(lineCoursesAvailable.split("\t")[1].split("\t"));
-                String sessionCourse = lineCoursesAvailable.split("\t")[2];
-
+        switch (stepEvent) {
+            case 1:
             System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
             System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste des cours:");
-            System.out.println("1. Automne");
-            System.out.println("2. Hiver");
-            System.out.println("3. Ete");
-            int choiceSession = scanner.nextInt();
+            System.out.println("1. Automne/n2. Hiver/n3. Ete");
 
-            OutputStreamWriter os = new OutputStreamWriter(clientSocket.getOutputStream());
-            BufferedWriter writer = new BufferedWriter(os);
+            int choiceSession = scanner.nextInt();
 
             if (choiceSession == 1) {
                 String commande = "CHARGER Automne";
-                writer.append(commande);
-                writer.flush();
+                oos.writeObject(commande);
+                oos.flush();
 
             } else if (choiceSession == 2) {
                 String commande = "CHARGER Hiver";
-                writer.append(commande);
-                writer.flush();
+                oos.writeObject(commande);
+                oos.flush();
 
             } else if (choiceSession == 3) {
                 String commande = "CHARGER Ete";
-                writer.append(commande);
-                writer.flush();
+                oos.writeObject(commande);
+                oos.flush();
             }
+            stepEvent = 2;
+            break;
 
-            ObjectInputStream listCoursesAsked = new ObjectInputStream(clientSocket.getInputStream());
-            ArrayList<Course> coursesSessionWanted = (ArrayList<Course>) listCoursesAsked.readObject();
+            case 2:
+            Object coursesObject = (Object) ois.readObject();
+            ArrayList<ArrayList<String>> coursesSessionWanted = (ArrayList<ArrayList<String>>) coursesObject;
 
-            System.out.println("Les cours offerts pendant la session d'" + choiceSession + "sont:");
-            coursesSessionWanted.forEach((course) -> System.out.println("- " + course.getCode() + "/t" +
-                    course.getName()));
-            System.out.println("1. Consulter les cours offerts pour une autre session");
-            System.out.println("2. Inscription à un cour");
+            System.out.println("Les cours offerts pendant pour cette session sont:");
+            coursesSessionWanted.forEach((course) -> System.out.println("- " + course.get(0) + "/t" +
+                    course.get(1)));
+
+            System.out.println("1. Consulter les cours offerts pour une autre session/n2. Inscription à un cour");
+
             int choiceEvent = scanner.nextInt();
 
             if (choiceEvent == 1) {
-                // TO-DO
-            } else if (choiceEvent == 2) {
-                System.out.println("Veuillez saisir votre prénom: ");
-                String surnameStudent = scanner.nextLine();
-                System.out.println("Veuillez saisir votre nom: ");
-                String nameStudent = scanner.nextLine();
-                System.out.println("Veuillez saisir votre email: ");
-                String emailStudent = scanner.nextLine();
-                System.out.println("Veuillez saisir votre matricule: ");
-                String matriculeStudent = scanner.nextLine();
-                System.out.println("Veuillez saisir le code du cour: ");
-                int codeCourseRegistered = scanner.nextInt();
+                stepEvent = 1;
+                break;
 
-                for (Course coursesListttt  : coursesSessionWanted) {
-                    if (codeCourseRegistered == coursesListttt.getCode()) {
+            } else if (choiceEvent == 2) {
+                System.out.println("/nVeuillez saisir votre prénom: ");
+                String surnameStudent = scanner.nextLine();
+                System.out.println("/nVeuillez saisir votre nom: ");
+                String nameStudent = scanner.nextLine();
+                System.out.println("/nVeuillez saisir votre email: ");
+                String emailStudent = scanner.nextLine();
+                System.out.println("/nVeuillez saisir votre matricule: ");
+                String matriculeStudent = scanner.nextLine();
+                System.out.println("/nVeuillez saisir le code du cour: ");
+                String codeCourseRegistered = String.valueOf(scanner.nextInt());
+
+                for (int i = 0; i < coursesSessionWanted.size(); i++) {
+                    if (codeCourseRegistered == coursesSessionWanted.get(i).get(1)) {
+                        String courseRegistrationName = coursesSessionWanted.get(i).get(0);
+                        String courseRegistrationCode = coursesSessionWanted.get(i).get(1);
+                        String courseRegistrationSession = coursesSessionWanted.get(i).get(2);
                         RegistrationForm newRegistrationForm = new RegistrationForm(surnameStudent, nameStudent,
-                                emailStudent, matriculeStudent, new Course(coursesListttt.getName(),
-                                coursesListttt.getCode(), coursesListttt.getSession()));
+                                emailStudent, matriculeStudent, new Course(courseRegistrationName,
+                                courseRegistrationCode, courseRegistrationSession));
+                        String commande = "INSCRIRE";
+                        oos.writeObject(commande);
+                        oos.flush();
+
+                        oos.writeObject(newRegistrationForm);
+                        oos.flush();
+                    } else {
+                        System.out.println("Ce cour ne se trouve pas dans la liste de cour offert.");
                     }
                 }
-
-                String commande = "INSCRIRE";
-                writer.append(commande);
-                writer.flush();
-
-                ObjectOutputStream os = new ObjectOutputStream(clientSocket.getOutputStream());
-                os.writeObject(newRegistrationForm);
-            }
             }
         }
     }
