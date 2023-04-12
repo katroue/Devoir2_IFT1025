@@ -175,49 +175,26 @@ public class Server<Pair> {
      et renvoyer un message de confirmation au client.
      La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
      */
-    public void handleRegistration() throws IOException {
-            InputStream RegistrationForm = null;
-            ObjectInputStream newRegistration = new ObjectInputStream(form);
+    public void handleRegistration() throws IOException, ClassNotFoundException {
+        ObjectInputStream obForm = new ObjectInputStream(client.getInputStream());
+        RegistrationForm newRegistration = (RegistrationForm) obForm.readObject();
 
         String surnameStudent = newRegistration.getPrenom();
-        String lastNameStudent = newRegistration.getName();
+        String lastNameStudent = newRegistration.getNom();
         String emailStudent = newRegistration.getEmail();
         String matriculeStudent = newRegistration.getMatricule();
         String courseWantedName = newRegistration.getCourse().getName();
-
-        /*
-        FileReader fileCourse = null;
-        try {
-            fileCourse = new FileReader("data/cour.txt");
-        } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-        BufferedReader courses = new BufferedReader(fileCourse);
-
-        String line;
-        String courseWantedCode = null;
-        String courseWantedSession = null;
-
-        while ((line = courses.readLine()) != null) {
-            String codeCourseAvailable = line.split("\t")[0];
-            String nameCourseAvailable = Arrays.toString(line.split("\t")[1].split("\t"));
-            String sessionCourseAvailable = line.split("\t")[2];
-            if (Objects.equals(courseWantedName, nameCourseAvailable)) {
-                courseWantedCode = codeCourseAvailable;
-                courseWantedSession = sessionCourseAvailable;
-            }
-        }
-        */
+        String courseWantedCode = newRegistration.getCourse().getCode();
 
         FileWriter inscriptionList = new FileWriter("data/inscription.txt");
 
         BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptionList);
 
-        String nouvelleLigneInscription = courseWantedSession + "\t" + courseWantedCode + "\t" +
+        String nouvelleLigneInscription = courseWantedName + "\t" + courseWantedCode + "\t" +
                 matriculeStudent + "\t" + lastNameStudent + "\t" + surnameStudent + "\t" + emailStudent;
 
-        inscriptionListUpdated.append(nouvelleLigneInscription);
+        inscriptionsUpdated.append(nouvelleLigneInscription);
 
-        inscriptionListUpdated.close();
+        inscriptionsUpdated.close();
     }
 }

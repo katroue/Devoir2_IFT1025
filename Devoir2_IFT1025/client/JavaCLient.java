@@ -104,7 +104,7 @@ public class JavaCLient {
                 int codeCourseRegistered = scanner.nextInt();
 
                 for (Course coursesListttt  : coursesSessionWanted) {
-                    if (coursesListttt.getCode() == codeCourseRegistered) {
+                    if (codeCourseRegistered == coursesListttt.getCode()) {
                         RegistrationForm newRegistrationForm = new RegistrationForm(surnameStudent, nameStudent,
                                 emailStudent, matriculeStudent, new Course(coursesListttt.getName(),
                                 coursesListttt.getCode(), coursesListttt.getSession()));
