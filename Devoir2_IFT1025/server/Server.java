@@ -3,7 +3,7 @@ package server;
 import java.io.*;
 import server.models.Course;
 import server.models.RegistrationForm;
-
+import javafx.util;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -22,11 +22,11 @@ public class Server<Pair> {
     private final ArrayList<EventHandler> handlers;
 
     /**
-     *
+     * A constructor that sets the connection to the client to the port given in argument, that initiate a list of
+     * event, and when the event is added to the list, we throw it the to handleEvents method to run it.
      * @param port
      * @throws IOException
      */
-
     public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
         this.handlers = new ArrayList<EventHandler>();
@@ -34,31 +34,31 @@ public class Server<Pair> {
     }
 
     /**
-     *
+     * A method that add the current event to the list of events.
      * @param h
      */
-
     public void addEventHandler(EventHandler h) {
         this.handlers.add(h);
     }
 
     /**
-     *
+     * For every event in the list of events, the functional interface EventHandler is called with the parameters given
+     * in argument.
      * @param cmd
      * @param arg
      * @throws IOException
      */
-
-    private void alertHandlers(String cmd, String arg) throws IOException {
+    private void alertHandlers(String cmd, String arg) throws IOException, ClassNotFoundException {
         for (EventHandler h : this.handlers) {
             h.handle(cmd, arg);
         }
     }
 
     /**
-     *
+     * The method waits for a client to get connected, then send a message to confirm the connection. It then initiates
+     * the input and the output stream. It then listen to the input the client sends, when the client is done, it
+     * disconnects. The method with sending a disconnection confirmation message.
      */
-
     public void run() {
         while (true) {
             try {
@@ -76,15 +76,18 @@ public class Server<Pair> {
     }
 
     /**
-     *
+     * The method waits for a command to be received from the client. It then reads it and converts it to a String. This
+     * command is then sent to the method processCommandLine.
+     * The command is ten separated the first word of the command to be the action to take and the second word being the
+     * session the client wants to see the available courses of. It then sends those two separate arguments to the method
+     * alertHandlers.
      * @throws IOException
      * @throws ClassNotFoundException
      */
-
     public void listen() throws IOException, ClassNotFoundException {
         String line;
         if ((line = this.objectInputStream.readObject().toString()) != null) {
-            Pair<String, String> parts = processCommandLine(line);
+            Pair parts = processCommandLine(line);
             String cmd = parts.getKey();
             String arg = parts.getValue();
             this.alertHandlers(cmd, arg);
@@ -92,11 +95,11 @@ public class Server<Pair> {
     }
 
     /**
-     *
+     * The command sent to the method is separated into parts, the separator being a space. It then creates a Pair with
+     * the
      * @param line
      * @return
      */
-
     public Pair<String, String> processCommandLine(String line) {
         String[] parts = line.split(" ");
         String cmd = parts[0];
@@ -120,7 +123,6 @@ public class Server<Pair> {
      * @param arg
      * @throws IOException
      */
-
     public void handleEvents(String cmd, String arg) throws IOException, ClassNotFoundException {
         if (cmd.equals(REGISTER_COMMAND)) {
             handleRegistration();

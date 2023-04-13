@@ -14,8 +14,6 @@ public class JavaCLient {
         ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
         ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
 
-        boolean clientConnected = true;
-
         Scanner scanner = new Scanner(System.in);
 
         // Pour pouvoir revenir en arrière facilement
@@ -64,6 +62,9 @@ public class JavaCLient {
                 break;
 
             } else if (choiceEvent == 2) {
+                stepEvent = 3;
+            }
+            case 3:
                 System.out.println("/nVeuillez saisir votre prénom: ");
                 String surnameStudent = scanner.nextLine();
                 System.out.println("/nVeuillez saisir votre nom: ");
@@ -89,11 +90,13 @@ public class JavaCLient {
 
                         oos.writeObject(newRegistrationForm);
                         oos.flush();
+                        System.out.println("Félicitation! Inscription réussie de " + surnameStudent + " au cours " +
+                                courseRegistrationCode);
+                        
                     } else {
                         System.out.println("Ce cour ne se trouve pas dans la liste de cour offert.");
                     }
                 }
-            }
         }
     }
 }
