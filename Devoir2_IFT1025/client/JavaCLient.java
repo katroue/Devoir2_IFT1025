@@ -19,8 +19,8 @@ public class JavaCLient {
         // Pour pouvoir se déplacer facilement dans les étapes d'inscription
         String stepEvent = "Choix de session";
 
-        boolean caRoule = true;
-        while (caRoule) {
+        //boolean caRoule = true;
+        //while (caRoule) {
             switch (stepEvent) {
                 // Choix de la session
                 case "Choix de session":
@@ -34,18 +34,20 @@ public class JavaCLient {
                         String commande = "CHARGER Automne";
                         oos.writeObject(commande);
                         oos.flush();
-
+                        stepEvent = "Choix d'action";
                     } else if (choiceSession == "2") {
                         String commande = "CHARGER Hiver";
                         oos.writeObject(commande);
                         oos.flush();
-
+                        stepEvent = "Choix d'action";
                     } else if (choiceSession == "3") {
                         String commande = "CHARGER Ete";
                         oos.writeObject(commande);
                         oos.flush();
-                    }
-                    stepEvent = "Choix d'action";
+                        stepEvent = "Choix d'action";
+                    } else {
+                        System.out.println("Cette option n'est pas disponible");
+                    } break;
                 // On montre les cours pour la session choisie et on demande de choisir la prochaine action
                 case "Choix d'action":
                     Object coursesObject = (Object) ois.readObject();
@@ -66,16 +68,16 @@ public class JavaCLient {
                         stepEvent = "Inscription";
                     }
                 case "Inscription":
-                    System.out.println("/nVeuillez saisir votre prénom: ");
+                    System.out.println("\nVeuillez saisir votre prénom: ");
                     String surnameStudent = scanner.nextLine();
-                    System.out.println("/nVeuillez saisir votre nom: ");
+                    System.out.println("\nVeuillez saisir votre nom: ");
                     String nameStudent = scanner.nextLine();
-                    System.out.println("/nVeuillez saisir votre email: ");
+                    System.out.println("\nVeuillez saisir votre email: ");
                     String emailStudent = scanner.nextLine();
-                    System.out.println("/nVeuillez saisir votre matricule: ");
+                    System.out.println("\nVeuillez saisir votre matricule: ");
                     String matriculeStudent = scanner.nextLine();
-                    System.out.println("/nVeuillez saisir le code du cour: ");
-                    String codeCourseRegistered = String.valueOf(scanner.nextInt());
+                    System.out.println("\nVeuillez saisir le code du cour: ");
+                    String codeCourseRegistered = scanner.nextLine();
 
                     String chargement = "CHARGER";
                     oos.writeObject(chargement);
@@ -102,7 +104,7 @@ public class JavaCLient {
                                     courseRegistrationCode);
 
                             // Fermeture de la connection
-                            caRoule = false;
+                            //caRoule = false;
 
                         } else {
                             System.out.println("Ce cour ne se trouve pas dans la liste de cour offert.");
@@ -110,6 +112,7 @@ public class JavaCLient {
                     }
             }
         }
-    }
 }
+
+
 
