@@ -1,7 +1,6 @@
 package server;
 
 import java.io.*;
-import java.io.*;
 import server.models.RegistrationForm;
 import server.models.Course;
 import java.net.ServerSocket;
@@ -24,8 +23,8 @@ public class Server {
     /**
      * A constructor that sets the connection to the client to the port given in argument, that initiate a list of
      * event, and when the event is added to the list, we throw it the to handleEvents method to run it.
-     * @param port
-     * @throws IOException
+     * @param port the port used to communicate with the client
+     * @throws IOException throws an exception if the input of the port is different from the client's port
      */
     public Server(int port) throws IOException {
         this.server = new ServerSocket(port, 1);
@@ -35,7 +34,7 @@ public class Server {
 
     /**
      * A method that add the current event to the list of events.
-     * @param h
+     * @param h the event to be added to the list of events
      */
     public void addEventHandler(EventHandler h) {
         this.handlers.add(h);
@@ -44,11 +43,13 @@ public class Server {
     /**
      * For every event in the list of events, the functional interface EventHandler is called with the parameters given
      * in argument.
-     * @param cmd
-     * @param arg
-     * @throws IOException
+     * @param cmd the action to be taken between charging the courses available for a certain session or to register
+     *            the student in a course
+     * @param arg the session the client wishes to view
+     * @throws IOException throws an exception if there is nothing for the method handle to handle
+     * @throws ClassNotFoundException
      */
-    private void alertHandlers(String cmd, String arg) throws IOException, ClassNotFoundException {
+    private void alertHandlers(String cmd, String arg) throws ClassNotFoundException, IOException {
         for (EventHandler h : this.handlers) {
             h.handle(cmd, arg);
         }
@@ -56,8 +57,8 @@ public class Server {
 
     /**
      * The method waits for a client to get connected, then send a message to confirm the connection. It then initiates
-     * the input and the output stream. It then listen to the input the client sends, when the client is done, it
-     * disconnects. The method with sending a disconnection confirmation message.
+     * the input and the output stream. It then listens to the input the client sends, and when the client is done, it
+     * disconnects. The method then sends a disconnection confirmation message.
      */
     public void run() {
         while (true) {
@@ -97,8 +98,8 @@ public class Server {
     /**
      * The command sent to the method is separated into parts, the separator being a space. It then creates a Pair with
      * the
-     * @param line
-     * @return
+     * @param line the command to be processed
+     * @return return a pair of the command and the argument
      */
     public AbstractMap.SimpleEntry<String, String> processCommandLine(String line) {
         String[] parts = line.split(" ");
@@ -108,7 +109,7 @@ public class Server {
     }
 
     /**
-     *
+     * The receiver and the sender of information are close and the connection with the client is cut.
      * @throws IOException
      */
     public void disconnect() throws IOException {
@@ -119,8 +120,8 @@ public class Server {
 
     /**
      *
-     * @param cmd
-     * @param arg
+     * @param cmd the action that determines the event
+     * @param arg the session the client wishes to view if the action is the load the courses
      * @throws IOException
      */
     public void handleEvents(String cmd, String arg) throws IOException, ClassNotFoundException {
@@ -137,11 +138,15 @@ public class Server {
      Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
+     @throws IOException
      */
     public void handleLoadCourses(String arg) throws IOException {
+        ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
+
         FileReader fileCourse = null;
         try {
-            fileCourse = new FileReader("data/cour.txt");
+            File newFile = new File("/Users/katherinedemers/Documents/GitHub/Devoir2_IFT1025/server/data/cour.txt");
+            fileCourse = new FileReader(newFile);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
 
@@ -150,9 +155,6 @@ public class Server {
         BufferedReader courses = new BufferedReader(fileCourse);
 
         ArrayList<Course> listAllCourses = new ArrayList<>();
-        
-        FileOutputStream fos = new FileOutputStream("coursesData");
-        ObjectOutputStream listCoursesAsked = new ObjectOutputStream(fos);
 
         String line;
         while ((line = courses.readLine()) != null) {
@@ -166,18 +168,21 @@ public class Server {
                 listAllCourses.add(newCourse);
             }
         }
-        listCoursesAsked.writeObject(listAllCourses);
+        oos.writeObject(listAllCourses);
         
-        listCoursesAsked.close();
+        oos.close();
     }
 
     /**
      Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
      La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
+     @throws IOException
+     @throws ClassNotFoundException
      */
     public void handleRegistration() throws IOException, ClassNotFoundException {
         ObjectInputStream obForm = new ObjectInputStream(client.getInputStream());
+
         RegistrationForm newRegistration = (RegistrationForm) obForm.readObject();
 
         String surnameStudent = newRegistration.getPrenom();
@@ -187,7 +192,8 @@ public class Server {
         String courseWantedName = newRegistration.getCourse().getName();
         String courseWantedCode = newRegistration.getCourse().getCode();
 
-        FileWriter inscriptionList = new FileWriter("data/inscription.txt");
+        File inscriptionFile = new File("/Users/katherinedemers/Documents/GitHub/Devoir2_IFT1025/server/data/inscription.txt");
+        FileWriter inscriptionList = new FileWriter(inscriptionFile);
 
         BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptionList);
 
