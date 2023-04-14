@@ -28,25 +28,24 @@ public class JavaCLient {
                     System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste des cours:");
                     System.out.println("1. Automne\n2. Hiver\n3. Ete");
 
-                    int choiceSession = scanner.nextInt();
+                    String choiceSession = scanner.nextLine();
 
-                    if (choiceSession == 1) {
+                    if (choiceSession == "1") {
                         String commande = "CHARGER Automne";
                         oos.writeObject(commande);
                         oos.flush();
 
-                    } else if (choiceSession == 2) {
+                    } else if (choiceSession == "2") {
                         String commande = "CHARGER Hiver";
                         oos.writeObject(commande);
                         oos.flush();
 
-                    } else if (choiceSession == 3) {
+                    } else if (choiceSession == "3") {
                         String commande = "CHARGER Ete";
                         oos.writeObject(commande);
                         oos.flush();
                     }
                     stepEvent = "Choix d'action";
-                    break;
                 // On montre les cours pour la session choisie et on demande de choisir la prochaine action
                 case "Choix d'action":
                     Object coursesObject = (Object) ois.readObject();
