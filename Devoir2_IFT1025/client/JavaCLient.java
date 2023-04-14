@@ -59,7 +59,6 @@ public class JavaCLient {
 
             if (choiceEvent == 1) {
                 stepEvent = 1;
-                break;
 
             } else if (choiceEvent == 2) {
                 stepEvent = 3;
@@ -76,11 +75,18 @@ public class JavaCLient {
                 System.out.println("/nVeuillez saisir le code du cour: ");
                 String codeCourseRegistered = String.valueOf(scanner.nextInt());
 
-                for (int i = 0; i < coursesSessionWanted.size(); i++) {
-                    if (codeCourseRegistered == coursesSessionWanted.get(i).get(1)) {
-                        String courseRegistrationName = coursesSessionWanted.get(i).get(0);
-                        String courseRegistrationCode = coursesSessionWanted.get(i).get(1);
-                        String courseRegistrationSession = coursesSessionWanted.get(i).get(2);
+                String chargement = "CHARGER";
+                oos.writeObject(chargement);
+                oos.flush();
+
+                Object coursesObjectInscription = (Object) ois.readObject();
+                ArrayList<ArrayList<String>> coursesInscription = (ArrayList<ArrayList<String>>) coursesObjectInscription;
+
+                for (int i = 0; i < coursesInscription.size(); i++) {
+                    if (codeCourseRegistered == coursesInscription.get(i).get(1)) {
+                        String courseRegistrationName = coursesInscription.get(i).get(0);
+                        String courseRegistrationCode = coursesInscription.get(i).get(1);
+                        String courseRegistrationSession = coursesInscription.get(i).get(2);
                         RegistrationForm newRegistrationForm = new RegistrationForm(surnameStudent, nameStudent,
                                 emailStudent, matriculeStudent, new Course(courseRegistrationName,
                                 courseRegistrationCode, courseRegistrationSession));

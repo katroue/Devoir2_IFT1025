@@ -1,7 +1,5 @@
 package server;
 
-import javafx.util.Pair;
-
 import java.io.*;
 import java.io.*;
 import server.models.RegistrationForm;
@@ -13,7 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
 
-public class Server<Pair> {
+public class Server {
 
     public final static String REGISTER_COMMAND = "INSCRIRE";
     public final static String LOAD_COMMAND = "CHARGER";
