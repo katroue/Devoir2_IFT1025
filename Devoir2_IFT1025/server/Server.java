@@ -1,12 +1,14 @@
 package server;
 
+import javafx.util.Pair;
+
 import java.io.*;
-import server.models.Course;
+import java.io.*;
 import server.models.RegistrationForm;
-import javafx.util;
-import java.io.*;
+import server.models.Course;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Objects;
@@ -87,7 +89,7 @@ public class Server<Pair> {
     public void listen() throws IOException, ClassNotFoundException {
         String line;
         if ((line = this.objectInputStream.readObject().toString()) != null) {
-            Pair parts = processCommandLine(line);
+            AbstractMap.SimpleEntry<String, String> parts = processCommandLine(line);
             String cmd = parts.getKey();
             String arg = parts.getValue();
             this.alertHandlers(cmd, arg);
@@ -100,11 +102,11 @@ public class Server<Pair> {
      * @param line
      * @return
      */
-    public Pair<String, String> processCommandLine(String line) {
+    public AbstractMap.SimpleEntry<String, String> processCommandLine(String line) {
         String[] parts = line.split(" ");
         String cmd = parts[0];
         String args = String.join(" ", Arrays.asList(parts).subList(1, parts.length));
-        return new Pair<>(cmd, args);
+        return new AbstractMap.SimpleEntry<>(cmd, args);
     }
 
     /**
