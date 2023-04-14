@@ -3,6 +3,7 @@ package client;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class JavaCLient {
@@ -30,34 +31,32 @@ public class JavaCLient {
 
                     String choiceSession = scanner.nextLine();
 
-                    if (choiceSession == "1") {
+                    if (Objects.equals(choiceSession, "1")) {
                         String commande = "CHARGER Automne";
                         oos.writeObject(commande);
                         oos.flush();
                         stepEvent = "Choix d'action";
-                    } else if (choiceSession == "2") {
+                    } else if (Objects.equals(choiceSession, "2")) {
                         String commande = "CHARGER Hiver";
                         oos.writeObject(commande);
                         oos.flush();
                         stepEvent = "Choix d'action";
-                    } else if (choiceSession == "3") {
+                    } else if (Objects.equals(choiceSession, "3")) {
                         String commande = "CHARGER Ete";
                         oos.writeObject(commande);
                         oos.flush();
                         stepEvent = "Choix d'action";
                     } else {
                         System.out.println("Cette option n'est pas disponible");
-                    } break;
+                    }
+
                 // On montre les cours pour la session choisie et on demande de choisir la prochaine action
                 case "Choix d'action":
-                    Object coursesObject = (Object) ois.readObject();
-                    ArrayList<ArrayList<String>> coursesSessionWanted = (ArrayList<ArrayList<String>>) coursesObject;
-
+                    ArrayList<server.models.Course> coursesObject = (ArrayList<server.models.Course>) ois.readObject();
                     System.out.println("Les cours offerts pendant pour cette session sont:");
-                    coursesSessionWanted.forEach((course) -> System.out.println("- " + course.get(0) + "/t" +
-                            course.get(1)));
-
-                    System.out.println("1. Consulter les cours offerts pour une autre session/n2. Inscription à un cour");
+                    coursesObject.forEach((course) -> System.out.println("- " + course.getName() + "\t" +
+                            course.getCode()));
+                    System.out.println("1. Consulter les cours offerts pour une autre session\n2. Inscription à un cour");
 
                     int choiceEvent = scanner.nextInt();
 

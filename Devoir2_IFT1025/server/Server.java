@@ -141,7 +141,6 @@ public class Server {
      @throws IOException
      */
     public void handleLoadCourses(String arg) throws IOException {
-        ObjectOutputStream oos = new ObjectOutputStream(client.getOutputStream());
 
         FileReader fileCourse = null;
         try {
@@ -168,9 +167,8 @@ public class Server {
                 listAllCourses.add(newCourse);
             }
         }
-        oos.writeObject(listAllCourses);
-        
-        oos.close();
+        this.objectOutputStream.writeObject(listAllCourses);
+        this.objectOutputStream.flush();
     }
 
     /**
@@ -181,9 +179,7 @@ public class Server {
      @throws ClassNotFoundException
      */
     public void handleRegistration() throws IOException, ClassNotFoundException {
-        ObjectInputStream obForm = new ObjectInputStream(client.getInputStream());
-
-        RegistrationForm newRegistration = (RegistrationForm) obForm.readObject();
+        RegistrationForm newRegistration = (RegistrationForm) this.objectInputStream.readObject();
 
         String surnameStudent = newRegistration.getPrenom();
         String lastNameStudent = newRegistration.getNom();
