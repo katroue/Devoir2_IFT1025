@@ -2,9 +2,6 @@ package server;
 
 import java.io.IOException;
 
-/**
- *
- */
 @FunctionalInterface
 public interface EventHandler {
     /**

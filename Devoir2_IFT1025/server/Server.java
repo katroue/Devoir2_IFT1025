@@ -144,7 +144,7 @@ public class Server {
 
         FileReader fileCourse = null;
         try {
-            File newFile = new File("/Users/katherinedemers/Documents/GitHub/Devoir2_IFT1025/server/data/cour.txt");
+            File newFile = new File("Devoir2_IFT1025/server/data/cour.txt");
             fileCourse = new FileReader(newFile);
         } catch (FileNotFoundException e) {
             throw new RuntimeException(e);
@@ -188,7 +188,7 @@ public class Server {
         String courseWantedName = newRegistration.getCourse().getName();
         String courseWantedCode = newRegistration.getCourse().getCode();
 
-        File inscriptionFile = new File("/Users/katherinedemers/Documents/GitHub/Devoir2_IFT1025/server/data/inscription.txt");
+        File inscriptionFile = new File("/Users/katherinedemers/Downloads/GitHub/Devoir2_IFT1025/server/data/inscription.txt");
         FileWriter inscriptionList = new FileWriter(inscriptionFile);
 
         BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptionList);

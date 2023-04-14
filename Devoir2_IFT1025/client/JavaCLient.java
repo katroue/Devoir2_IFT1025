@@ -19,7 +19,7 @@ public class JavaCLient {
 
         // Pour pouvoir se déplacer facilement dans les étapes d'inscription
         String stepEvent = "Choix de session";
-
+        ArrayList<String> infoStudent = new ArrayList<>();
         //boolean caRoule = true;
         //while (caRoule) {
             switch (stepEvent) {
@@ -53,6 +53,7 @@ public class JavaCLient {
                 // On montre les cours pour la session choisie et on demande de choisir la prochaine action
                 case "Choix d'action":
                     ArrayList<server.models.Course> coursesObject = (ArrayList<server.models.Course>) ois.readObject();
+
                     System.out.println("Les cours offerts pendant pour cette session sont:");
                     coursesObject.forEach((course) -> System.out.println("- " + course.getName() + "\t" +
                             course.getCode()));
@@ -65,50 +66,88 @@ public class JavaCLient {
 
                     } else if (choiceEvent == 2) {
                         stepEvent = "Inscription";
+                    } else {
+                        System.out.println("Veuillez entrer un option valide.");
+                        stepEvent = "Choix d'action";
                     }
+                    // On obtient les informations de l'étudiant pour l'inscription au cours
                 case "Inscription":
-                    System.out.println("\nVeuillez saisir votre prénom: ");
-                    String surnameStudent = scanner.nextLine();
-                    System.out.println("\nVeuillez saisir votre nom: ");
-                    String nameStudent = scanner.nextLine();
-                    System.out.println("\nVeuillez saisir votre email: ");
-                    String emailStudent = scanner.nextLine();
-                    System.out.println("\nVeuillez saisir votre matricule: ");
-                    String matriculeStudent = scanner.nextLine();
-                    System.out.println("\nVeuillez saisir le code du cour: ");
-                    String codeCourseRegistered = scanner.nextLine();
 
+                    int questions =1;
+                    switch (questions) {
+                        case 1:
+                        System.out.println("Veuillez saisir votre prénom: ");
+                        String surnameStudent = scanner.nextLine();
+                        if (surnameStudent.matches(".*\\d.*")) {
+                            System.out.println("Le prénom ne peut pas contenir un nombre");
+                            questions = 1;
+                            break;
+                        } else {
+                            infoStudent.add(surnameStudent);
+                            questions = 2;
+                            break;
+                        }
+                        case 2:
+                        System.out.println("Veuillez saisir votre nom: ");
+                        String nameStudent = scanner.nextLine();
+                        if (nameStudent.matches(".*\\d.*")) {
+                            System.out.println("Le nom ne peut pas contenir un nombre");
+                            questions = 2;
+                            break;
+                        } else {
+                            infoStudent.add(nameStudent);
+                            questions = 3;
+                            break;
+                        }
+                        case 3:
+                        System.out.println("Veuillez saisir votre email: ");
+                        String emailStudent = scanner.nextLine();
+                        if (emailStudent.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")) {
+                            infoStudent.add(emailStudent);
+                            questions = 4;
+                        } else {
+                            System.out.println("Veuillez rentrer un email valide");
+                            questions = 3;
+                            break;
+                        }
+                        case 4:
+                        System.out.println("Veuillez saisir votre matricule: ");
+                        String matriculeStudent = scanner.nextLine();
+                        case 5:
+                        System.out.println("Veuillez saisir le code du cour: ");
+                        String codeCourseRegistered = scanner.nextLine();
+                    }
                     String chargement = "CHARGER";
                     oos.writeObject(chargement);
                     oos.flush();
 
-                    Object coursesObjectInscription = (Object) ois.readObject();
-                    ArrayList<ArrayList<String>> coursesInscription = (ArrayList<ArrayList<String>>) coursesObjectInscription;
+                    ArrayList<server.models.Course> coursesInscription = (ArrayList<server.models.Course>) ois.readObject();
 
                     for (int i = 0; i < coursesInscription.size(); i++) {
-                        if (codeCourseRegistered == coursesInscription.get(i).get(1)) {
-                            String courseRegistrationName = coursesInscription.get(i).get(0);
-                            String courseRegistrationCode = coursesInscription.get(i).get(1);
-                            String courseRegistrationSession = coursesInscription.get(i).get(2);
-                            RegistrationForm newRegistrationForm = new RegistrationForm(surnameStudent, nameStudent,
-                                    emailStudent, matriculeStudent, new Course(courseRegistrationName,
+                        if (infoStudent.get(4) == coursesInscription.get(i).getCode()) {
+                            String courseRegistrationName = coursesInscription.get(i).getName();
+                            String courseRegistrationCode = coursesInscription.get(i).getCode();
+                            String courseRegistrationSession = coursesInscription.get(i).getSession();
+                            RegistrationForm newRegistrationForm = new RegistrationForm(infoStudent.get(0), infoStudent.get(1),
+                                    infoStudent.get(2), infoStudent.get(3), new Course(courseRegistrationName,
                                     courseRegistrationCode, courseRegistrationSession));
+
                             String commande = "INSCRIRE";
                             oos.writeObject(commande);
                             oos.flush();
 
                             oos.writeObject(newRegistrationForm);
                             oos.flush();
-                            System.out.println("Félicitation! Inscription réussie de " + surnameStudent + " au cours " +
+                            System.out.println("Félicitation! Inscription réussie de " + infoStudent.get(0) + " au cours " +
                                     courseRegistrationCode);
-
-                            // Fermeture de la connection
-                            //caRoule = false;
 
                         } else {
                             System.out.println("Ce cour ne se trouve pas dans la liste de cour offert.");
                         }
                     }
+                    break;
+                default:
+                    throw new IllegalStateException("Unexpected value: " + stepEvent);
             }
         }
 }
