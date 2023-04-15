@@ -112,6 +112,7 @@ public static void task2Launcher ()throws IOException, ClassNotFoundException {
                     if (emailStudent.matches("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$")) {
                         infoStudent.add(emailStudent);
                         questions = 4;
+                        break;
                     } else {
                         System.out.println("Veuillez rentrer un email valide");
                         questions = 3;
@@ -120,9 +121,28 @@ public static void task2Launcher ()throws IOException, ClassNotFoundException {
                 case 4:
                     System.out.println("Veuillez saisir votre matricule: ");
                     String matriculeStudent = scanner.nextLine();
+                    if (matriculeStudent.matches("[0-9]")) {
+                        infoStudent.add(matriculeStudent);
+                        questions = 5;
+                        break;
+                    }
+                    else {
+                        System.out.println("Veuillez rentrer un matricule valide");
+                        questions = 4;
+                        break;
+                    }
                 case 5:
                     System.out.println("Veuillez saisir le code du cour: ");
                     String codeCourseRegistered = scanner.nextLine();
+                    if (codeCourseRegistered.matches("[A-Z]{3} [0-9]{4}")) {
+                        infoStudent.add(codeCourseRegistered);
+                        break;
+                    }
+                    else {
+                        System.out.println("Veuillez rentrer un code de cour valide");
+                        questions = 5;
+                        break;
+                    }
             }
             String chargement = "CHARGER";
             oos.writeObject(chargement);
@@ -156,5 +176,10 @@ public static void task2Launcher ()throws IOException, ClassNotFoundException {
         default:
             throw new IllegalStateException("Unexpected value: " + stepEvent);
     }
+    //oos.close();
+    //ois.close();
+    //scanner.close();
+    //clientSocket.close();
+    System.out.println("Client has deconected everything.");
 }
 }
