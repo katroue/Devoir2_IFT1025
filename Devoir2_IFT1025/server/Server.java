@@ -47,7 +47,7 @@ public class Server {
      *            the student in a course
      * @param arg the session the client wishes to view
      * @throws IOException throws an exception if there is nothing for the method handle to handle
-     * @throws ClassNotFoundException
+     * @throws ClassNotFoundException throws an exception if the method can't find the interface EventHandler
      */
     private void alertHandlers(String cmd, String arg) throws ClassNotFoundException, IOException {
         for (EventHandler h : this.handlers) {
@@ -82,8 +82,9 @@ public class Server {
      * The command is ten separated the first word of the command to be the action to take and the second word being the
      * session the client wants to see the available courses of. It then sends those two separate arguments to the method
      * alertHandlers.
-     * @throws IOException
-     * @throws ClassNotFoundException
+     * @throws IOException throws an exception if the object to be read from the socket is null
+     * @throws ClassNotFoundException throws an exception if the method cannot find the method processCommandLine or
+     * alertHandlers
      */
     public void listen() throws IOException, ClassNotFoundException {
         String line;
@@ -110,7 +111,7 @@ public class Server {
 
     /**
      * The receiver and the sender of information are close and the connection with the client is cut.
-     * @throws IOException
+     * @throws IOException throws an exception if the streams and/or the client are already close or non-existent
      */
     public void disconnect() throws IOException {
         objectOutputStream.close();
@@ -122,7 +123,7 @@ public class Server {
      *
      * @param cmd the action that determines the event
      * @param arg the session the client wishes to view if the action is the load the courses
-     * @throws IOException
+     * @throws IOException throws an exception if the command and/or the argument are null
      */
     public void handleEvents(String cmd, String arg) throws IOException, ClassNotFoundException {
         if (cmd.equals(REGISTER_COMMAND)) {
@@ -138,7 +139,7 @@ public class Server {
      Ensuite, elle renvoie la liste des cours pour une session au client en utilisant l'objet 'objectOutputStream'.
      La méthode gère les exceptions si une erreur se produit lors de la lecture du fichier ou de l'écriture de l'objet dans le flux.
      @param arg la session pour laquelle on veut récupérer la liste des cours
-     @throws IOException
+     @throws IOException throws an excpetion if the arg is null
      */
     public void handleLoadCourses(String arg) throws IOException {
 
@@ -175,8 +176,8 @@ public class Server {
      Récupérer l'objet 'RegistrationForm' envoyé par le client en utilisant 'objectInputStream', l'enregistrer dans un fichier texte
      et renvoyer un message de confirmation au client.
      La méthode gère les exceptions si une erreur se produit lors de la lecture de l'objet, l'écriture dans un fichier ou dans le flux de sortie.
-     @throws IOException
-     @throws ClassNotFoundException
+     @throws IOException throws an exception if the object read from the socket is null
+     @throws ClassNotFoundException throws an exception if the method cannot find the classes used in the method
      */
     public void handleRegistration() throws IOException, ClassNotFoundException {
         String newRegistration = (String) this.objectInputStream.readObject();
