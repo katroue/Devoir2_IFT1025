@@ -179,21 +179,20 @@ public class Server {
      @throws ClassNotFoundException
      */
     public void handleRegistration() throws IOException, ClassNotFoundException {
-        RegistrationForm newRegistration = (RegistrationForm) this.objectInputStream.readObject();
+        String newRegistration = (String) this.objectInputStream.readObject();
 
-        String surnameStudent = newRegistration.getPrenom();
-        String lastNameStudent = newRegistration.getNom();
-        String emailStudent = newRegistration.getEmail();
-        String matriculeStudent = newRegistration.getMatricule();
-        String courseWantedName = newRegistration.getCourse().getName();
-        String courseWantedCode = newRegistration.getCourse().getCode();
+        String[] partsInfoStudent = newRegistration.split(" ");
+        String surnameStudent = partsInfoStudent[0];
+        String lastNameStudent = partsInfoStudent[1];
+        String emailStudent = partsInfoStudent[2];
+        String matriculeStudent = partsInfoStudent[3];
 
         File inscriptionFile = new File("/Users/katherinedemers/Downloads/GitHub/Devoir2_IFT1025/server/data/inscription.txt");
         FileWriter inscriptionList = new FileWriter(inscriptionFile);
 
         BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptionList);
 
-        String nouvelleLigneInscription = courseWantedName + "\t" + courseWantedCode + "\t" +
+        String nouvelleLigneInscription = partsInfoStudent[5] + "\t" + partsInfoStudent[6] + "\t" +
                 matriculeStudent + "\t" + lastNameStudent + "\t" + surnameStudent + "\t" + emailStudent;
 
         inscriptionsUpdated.append(nouvelleLigneInscription);
