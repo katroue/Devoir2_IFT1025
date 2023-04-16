@@ -76,41 +76,39 @@ public class JavaCLient {
                 System.out.println("Veuillez saisir votre prénom: ");
                 scanner.nextLine();
                 String surnameStudent = scanner.nextLine();
-                if (surnameStudent.matches(".*\\d.*")) {
+                while (surnameStudent.matches(".*\\d.*")) { // On attend que l'entrée soit valide
                     System.out.println("Le prénom ne peut pas contenir un nombre");
-                } else {
-                    infoStudent.add(surnameStudent);
                 }
+                infoStudent.add(surnameStudent);
+         
                 System.out.println("Veuillez saisir votre nom: ");
                 String nameStudent = scanner.nextLine();
-                if (nameStudent.matches(".*\\d.*")) {
+                while (nameStudent.matches(".*\\d.*")) { // On attend que l'entrée soit valide
                     System.out.println("Le nom ne peut pas contenir un nombre");
-                } else {
-                    infoStudent.add(nameStudent);
                 }
+                infoStudent.add(nameStudent);
+                
                 System.out.println("Veuillez saisir votre email: ");
                 String emailStudent = scanner.nextLine();
-                if (emailStudent.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) {
-                    infoStudent.add(emailStudent);
-                } else {
+                while (emailStudent.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") == false) {
                     System.out.println("Veuillez rentrer un email valide");
                 }
+                infoStudent.add(emailStudent);
+                
                 System.out.println("Veuillez saisir votre matricule: ");
                 String matriculeStudent = scanner.nextLine();
-                if (matriculeStudent.matches("[0-9]{2,}")) {
-                    infoStudent.add(matriculeStudent);
-                }
-                else {
+                while (matriculeStudent.matches("[0-9]{2,}") == false) {
                     System.out.println("Veuillez rentrer un matricule valide");
+                   
                 }
+                infoStudent.add(matriculeStudent);
+                
                 System.out.println("Veuillez saisir le code du cour: ");
                 String codeCourseRegistered = scanner.nextLine();
-                if (codeCourseRegistered.matches("[A-Z]{3}[0-9]{4}")) {
-                    infoStudent.add(codeCourseRegistered);
-                }
-                else {
+                while (codeCourseRegistered.matches("[A-Z]{3}[0-9]{4}") == false) {
                     System.out.println("Veuillez rentrer un code de cour valide");
                 }
+                infoStudent.add(codeCourseRegistered);
         }
         for (int i = 0; i < coursesObject.size(); i++) {
             if (Objects.equals(infoStudent.get(4), coursesObject.get(i).getCode())) {
