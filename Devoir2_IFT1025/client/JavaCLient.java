@@ -14,15 +14,16 @@ public class JavaCLient {
         // On se connecte au serveur
         Socket clientSocket = new Socket("127.0.0.1", 1337);
         System.out.println("Ca roule!");
-
+        
+        // Initialisation des streams
         ObjectOutputStream oos = new ObjectOutputStream(clientSocket.getOutputStream());
         ObjectInputStream ois = new ObjectInputStream(clientSocket.getInputStream());
 
         // Pour pouvoir se déplacer facilement dans les étapes d'inscription
         String stepEvent = null;
+        
+        // Création de la liste où seront déposer les informations de l'étudiant pour l'inscription
         ArrayList<String> infoStudent = new ArrayList<>();
-        //boolean caRoule = true;
-        //while (caRoule) {
 
         // Message d'ouverture du portail d'inscription
         System.out.println("*** Bienvenue au portail d'inscription de cours de l'UDEM ***");
@@ -50,10 +51,12 @@ public class JavaCLient {
         } else {
             System.out.println("Cette option n'est pas disponible");
         }
+        
+        // Lecture de liste de cours de la session choisie
         ArrayList<server.models.Course> coursesObject = (ArrayList<server.models.Course>) ois.readObject();
-        coursesObject.forEach((courses)->System.out.println(courses.getCode()));
+        
         switch (Objects.requireNonNull(stepEvent)) {
-                // On montre les cours pour la session choisie et on demande de choisir la prochaine action
+            // On montre les cours pour la session choisie et on demande de choisir la prochaine action
             case "Choix d'action":
                 System.out.println("Les cours offerts pendant pour cette session sont:");
                 coursesObject.forEach((course) -> System.out.println("- " + course.getName() + "\t" +
@@ -61,20 +64,50 @@ public class JavaCLient {
                 System.out.println("1. Consulter les cours offerts pour une autre session\n2. Inscription à un cour");
 
                 int choiceEvent = scanner.nextInt();
-
+                
+                while (choiceEvent != 1 && choiceEvent != 2) { // On attend que l'entrée soit valide
+                    System.out.println("Veuillez choisir une option valide.")
+                }
                 if (choiceEvent == 1) {
-                    stepEvent = "Choix de session";
+                    System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste des cours:");
+                    System.out.println("1. Automne\n2. Hiver\n3. Ete");
+                    
+                    String choiceSession = scanner.nextLine();
+
+                    // Choix de la session et envoi de la commande d'action de chargement de la liste des cours
+                   if (Objects.equals(choiceSession, "1")) {
+                       String commande = "CHARGER Automne";
+                       oos.writeObject(commande);
+                       oos.flush();
+                       stepEvent = "Choix d'action"; // *** CHECKER SI ON REVIENT VRM EN ARRIERE ***
+                   } else if (Objects.equals(choiceSession, "2")) {
+                       String commande = "CHARGER Hiver";
+                       oos.writeObject(commande);
+                       oos.flush();
+                       stepEvent = "Choix d'action";
+                   } else if (Objects.equals(choiceSession, "3")) {
+                       String commande = "CHARGER Ete";
+                       oos.writeObject(commande);
+                       oos.flush();
+                       stepEvent = "Choix d'action";
+                   } else {
+                       System.out.println("Cette option n'est pas disponible");
+                   }
+        
+                   // Lecture de liste de cours de la session choisie
+                   ArrayList<server.models.Course> newCoursesObject = (ArrayList<server.models.Course>) ois.readObject();
+                   System.out.println("Les cours offerts pendant pour cette session sont:");
+                   newCoursesObject.forEach((course) -> System.out.println("- " + course.getName() + "\t" +
+                        course.getCode()));
+                    
 
                 } else if (choiceEvent == 2) {
                     stepEvent = "Inscription";
-                } else {
-                    System.out.println("Veuillez entrer un option valide.");
-                    stepEvent = "Choix d'action";
-                    }
-                    // On obtient les informations de l'étudiant pour l'inscription au cours
+                }
+            // On obtient les informations de l'étudiant pour l'inscription au cours
             case "Inscription":
                 System.out.println("Veuillez saisir votre prénom: ");
-                scanner.nextLine();
+                scanner.nextLine(); // Pour ne pas lire le "/n" du nextInt() précédent
                 String surnameStudent = scanner.nextLine();
                 while (surnameStudent.matches(".*\\d.*")) { // On attend que l'entrée soit valide
                     System.out.println("Le prénom ne peut pas contenir un nombre");
@@ -90,14 +123,14 @@ public class JavaCLient {
                 
                 System.out.println("Veuillez saisir votre email: ");
                 String emailStudent = scanner.nextLine();
-                while (emailStudent.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") == false) {
+                while (emailStudent.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") == false) { // On attend que l'entrée soit valide
                     System.out.println("Veuillez rentrer un email valide");
                 }
                 infoStudent.add(emailStudent);
                 
                 System.out.println("Veuillez saisir votre matricule: ");
                 String matriculeStudent = scanner.nextLine();
-                while (matriculeStudent.matches("[0-9]{2,}") == false) {
+                while (matriculeStudent.matches("[0-9]{2,}") == false) { // On attend que l'entrée soit valide
                     System.out.println("Veuillez rentrer un matricule valide");
                    
                 }
@@ -105,7 +138,7 @@ public class JavaCLient {
                 
                 System.out.println("Veuillez saisir le code du cour: ");
                 String codeCourseRegistered = scanner.nextLine();
-                while (codeCourseRegistered.matches("[A-Z]{3}[0-9]{4}") == false) {
+                while (codeCourseRegistered.matches("[A-Z]{3}[0-9]{4}") == false) { // On attend que l'entrée soit valide
                     System.out.println("Veuillez rentrer un code de cour valide");
                 }
                 infoStudent.add(codeCourseRegistered);
@@ -124,7 +157,7 @@ public class JavaCLient {
                 oos.writeObject(commande);
                 oos.flush();
 
-                // On envoit le formulaire d'inscription rempli
+                // On envoit la ligne du formulaire d'inscription rempli
                 oos.writeObject(newRegistrationForm);
                 oos.flush();
                 System.out.println("Félicitation! Inscription réussie de " + infoStudent.get(0) + " au cours " +
