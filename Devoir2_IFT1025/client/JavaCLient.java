@@ -66,13 +66,13 @@ public class JavaCLient {
                 int choiceEvent = scanner.nextInt();
                 
                 while (choiceEvent != 1 && choiceEvent != 2) { // On attend que l'entrée soit valide
-                    System.out.println("Veuillez choisir une option valide.")
+                    System.out.println("Veuillez choisir une option valide.");
                 }
                 if (choiceEvent == 1) {
                     System.out.println("Veuillez choisir la session pour laquelle vous voulez consulter la liste des cours:");
                     System.out.println("1. Automne\n2. Hiver\n3. Ete");
-                    
-                    String choiceSession = scanner.nextLine();
+
+                    choiceSession = scanner.nextLine();
 
                     // Choix de la session et envoi de la commande d'action de chargement de la liste des cours
                    if (Objects.equals(choiceSession, "1")) {
