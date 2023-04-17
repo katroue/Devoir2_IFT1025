@@ -27,10 +27,6 @@ import java.util.ArrayList;
 public class clientFx extends Application {
 
     public static void main(String[] args) throws IOException {
-        Socket clientFx = new Socket("127.0.0.1", 1337);
-
-        ObjectOutputStream oos = new ObjectOutputStream(clientFx.getOutputStream());
-        ObjectInputStream ois = new ObjectInputStream(clientFx.getInputStream());
         launch(args);
     }
 
