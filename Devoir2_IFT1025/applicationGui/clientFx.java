@@ -1,8 +1,9 @@
-package client;
+package applicationGui;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,12 +12,25 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
+import javafx.event.EventHandler;
+import server.models.Course;
 
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.util.Objects;
+import java.net.Socket;
+
+import java.util.ArrayList;
 
 
 public class clientFx extends Application {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+        Socket clientFx = new Socket("127.0.0.1", 1337);
+
+        ObjectOutputStream oos = new ObjectOutputStream(clientFx.getOutputStream());
+        ObjectInputStream ois = new ObjectInputStream(clientFx.getInputStream());
         launch(args);
     }
 
@@ -105,6 +119,57 @@ public class clientFx extends Application {
         box2.getChildren().add(sectionCharger);
         // Create a new scene with the VBox and set it as the primary stage's scene
         Scene scene = new Scene(box2, 400, 400);
-    }
 
+        //Event handlers
+
+        return btnCharger.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent actionEvent) {
+                if (actionEvent == btnCharger) {
+                    Socket clientFx = null;
+                    try {
+                        clientFx = new Socket("127.0.0.1", 1337);
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    ObjectOutputStream oos = null;
+                    try {
+                        oos = new ObjectOutputStream(clientFx.getOutputStream());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                    ObjectInputStream ois = null;
+                    try {
+                        ois = new ObjectInputStream(clientFx.getInputStream());
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+
+                    oos.writeObject("CHARGER " + session);
+                    try {
+                        oos.flush();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+
+                    ArrayList<server.models.Course> coursesObject = (ArrayList<server.models.Course>) ois.readObject();
+                } else if (actionEvent == "INSCRIRE") {
+                    oos.writeObject("INSCRIRE");
+                    oos.flush();
+
+
+                }
+            }
+        })
+
+
+
+                ;
+    }
 }
+
+
+
+
