@@ -166,6 +166,10 @@ public class JavaCLient {
             }
         }
     }
+    scanner.close();
+    oos.close();
+    ois.close();
+    clientSocket.close();
 }
 
 
