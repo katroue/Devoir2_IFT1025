@@ -22,7 +22,7 @@ public class JavaCLient {
         // Pour pouvoir se déplacer facilement dans les étapes d'inscription
         String stepEvent = null;
         
-        // Création de la liste où seront déposer les informations de l'étudiant pour l'inscription
+        // Création de la liste où seront déposées les informations de l'étudiant pour l'inscription
         ArrayList<String> infoStudent = new ArrayList<>();
 
         // Message d'ouverture du portail d'inscription
