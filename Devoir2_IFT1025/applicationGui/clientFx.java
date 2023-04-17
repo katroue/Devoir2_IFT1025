@@ -1,4 +1,4 @@
-package applicationGui;
+package client;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -35,7 +35,7 @@ public class clientFx extends Application {
     }
 
     @Override
-    public void start(Stage primaryStage) {
+    public void start(Stage primaryStage) throws IOException, ClassNotFoundException {
         // Create a label for the left region & Create a VBox to hold the left region content
         Label leftLabel = new Label(" Liste des cours ");
         VBox leftVBox = new VBox(leftLabel);
@@ -97,7 +97,7 @@ public class clientFx extends Application {
         // vBox.getChildren().add(newPane);
         box1.getChildren().add(gridPane);
     }
-    public void saisonSelection(VBox box2){
+    public void saisonSelection(VBox box2) throws IOException, ClassNotFoundException {
 
         ObservableList<String> choices = FXCollections.observableArrayList(
                 " Hiver ", " Été ", " Automne ");
@@ -122,51 +122,27 @@ public class clientFx extends Application {
 
         //Event handlers
 
-        return btnCharger.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent actionEvent) {
-                if (actionEvent == btnCharger) {
-                    Socket clientFx = null;
-                    try {
-                        clientFx = new Socket("127.0.0.1", 1337);
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+        //return btnCharger.setOnAction(new EventHandler<ActionEvent>());
+    }
+    public void handle(String actionEvent, String choiceSession) throws IOException, ClassNotFoundException {
+        Socket clientFxSocket = new Socket("127.0.0.1", 1337);
 
-                    ObjectOutputStream oos = null;
-                    try {
-                        oos = new ObjectOutputStream(clientFx.getOutputStream());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
-                    ObjectInputStream ois = null;
-                    try {
-                        ois = new ObjectInputStream(clientFx.getInputStream());
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+        ObjectOutputStream oos = new ObjectOutputStream(clientFxSocket.getOutputStream());
+        ObjectInputStream ois = new ObjectInputStream(clientFxSocket.getInputStream());
 
+        if (actionEvent == "CHARGER") {
 
-                    oos.writeObject("CHARGER " + session);
-                    try {
-                        oos.flush();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
-                    }
+            String commandToSend = "CHARGER " + choiceSession;
+            oos.writeObject(commandToSend);
+            oos.flush();
 
-                    ArrayList<server.models.Course> coursesObject = (ArrayList<server.models.Course>) ois.readObject();
-                } else if (actionEvent == "INSCRIRE") {
-                    oos.writeObject("INSCRIRE");
-                    oos.flush();
+            ArrayList<server.models.Course> coursesObject = (ArrayList<Course>) ois.readObject();
 
+        } else if (actionEvent == "INSCRIRE") {
+            oos.writeObject("INSCRIRE");
+            oos.flush();
 
-                }
-            }
-        })
-
-
-
-                ;
+        }
     }
 }
 
