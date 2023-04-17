@@ -142,7 +142,8 @@ public class Server {
      @throws IOException throws an excpetion if the arg is null
      */
     public void handleLoadCourses(String arg) throws IOException {
-
+        
+        // Lecture du fichier des cours disponibles
         FileReader fileCourse = null;
         try {
             File newFile = new File("Devoir2_IFT1025/server/data/cour.txt");
@@ -153,7 +154,8 @@ public class Server {
         }
 
         BufferedReader courses = new BufferedReader(fileCourse);
-
+        
+        // Initialisation de la liste des cours qu'on enverra au client
         ArrayList<Course> listAllCourses = new ArrayList<>();
 
         String line;
@@ -163,7 +165,8 @@ public class Server {
             String sessionCourse = line.split("\t")[2];
             
             Course newCourse = new Course(nameCourse, codeCourse, sessionCourse);
-
+            
+            // Si le cour est de la session demandé, on l'ajoute à la liste
             if (Objects.equals(sessionCourse, arg)) {
                 listAllCourses.add(newCourse);
             }
@@ -180,6 +183,7 @@ public class Server {
      @throws ClassNotFoundException throws an exception if the method cannot find the classes used in the method
      */
     public void handleRegistration() throws IOException, ClassNotFoundException {
+        // Reception de la ligne d'inscription du nouvelle étudiant
         String newRegistration = (String) this.objectInputStream.readObject();
 
         String[] partsInfoStudent = newRegistration.split(" ");
@@ -188,14 +192,15 @@ public class Server {
         String emailStudent = partsInfoStudent[2];
         String matriculeStudent = partsInfoStudent[3];
 
-        File inscriptionFile = new File("/Users/katherinedemers/Downloads/GitHub/Devoir2_IFT1025/server/data/inscription.txt");
+        File inscriptionFile = new File("Devoir2_IFT1025/server/data/inscription.txt");
         FileWriter inscriptionList = new FileWriter(inscriptionFile);
 
         BufferedWriter inscriptionsUpdated = new BufferedWriter(inscriptionList);
 
         String nouvelleLigneInscription = partsInfoStudent[5] + "\t" + partsInfoStudent[6] + "\t" +
                 matriculeStudent + "\t" + lastNameStudent + "\t" + surnameStudent + "\t" + emailStudent;
-
+        
+        // On ajoute la ligne au fichier Inscription
         inscriptionsUpdated.append(nouvelleLigneInscription);
 
         inscriptionsUpdated.close();
