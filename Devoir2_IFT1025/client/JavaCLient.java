@@ -174,17 +174,16 @@ public class JavaCLient {
                 }
                 infoStudent.add(matriculeStudent);
 
+                // Liste des codes de cours pour regarder que l'usager entre bien un code valide
                 ArrayList<String> codeCours = new ArrayList<>();
                 coursesObject.forEach((course) -> codeCours.add(course.getCode()));
 
                 System.out.println("Veuillez saisir le code du cour: ");
                 String codeCourseRegistered = scanner.nextLine();
 
-                while (!codeCourseRegistered.matches("[A-Z]{3}[0-9]{4}")) { // On attend que l'entrée soit valide
+                while (!codeCours.contains(codeCourseRegistered)) { // On attend que l'entrée soit valide
                     System.out.println("Veuillez rentrer un code de cour valide");
-                }
-                while (codeCours.contains(codeCourseRegistered)) {
-                    System.out.println("Ce cour n'est pas présent dans liste de cours disponibles pour la session choisi.");
+                    codeCourseRegistered = scanner.nextLine();
                 }
                 infoStudent.add(codeCourseRegistered);
 
@@ -208,14 +207,6 @@ public class JavaCLient {
                         oos.flush();
                         System.out.println("Félicitation! Inscription réussie de " + infoStudent.get(0) + " au cours " +
                                 courseRegistrationCode);
-
-                        // On envoie le formulaire d'inscription rempli
-                        oos.writeObject(newRegistrationForm);
-                        oos.flush();
-                        System.out.println("Félicitation! Inscription réussie de " + infoStudent.get(0) + " au cours " +
-                                courseRegistrationCode);
-
-
                     }
                 }
         scanner.close();
