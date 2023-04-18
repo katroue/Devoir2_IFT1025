@@ -172,17 +172,19 @@ public class JavaCLient {
                     System.out.println("Veuillez rentrer un matricule valide");
                     matriculeStudent = scanner.nextLine();
                 }
-
                 infoStudent.add(matriculeStudent);
 
+                ArrayList<String> codeCours = new ArrayList<>();
+                coursesObject.forEach((course) -> codeCours.add(course.getCode()));
 
-                infoStudent.add(matriculeStudent);
-                
                 System.out.println("Veuillez saisir le code du cour: ");
                 String codeCourseRegistered = scanner.nextLine();
 
                 while (!codeCourseRegistered.matches("[A-Z]{3}[0-9]{4}")) { // On attend que l'entrée soit valide
                     System.out.println("Veuillez rentrer un code de cour valide");
+                }
+                while (codeCours.contains(codeCourseRegistered)) {
+                    System.out.println("Ce cour n'est pas présent dans liste de cours disponibles pour la session choisi.");
                 }
                 infoStudent.add(codeCourseRegistered);
 
@@ -223,8 +225,3 @@ public class JavaCLient {
         }
     }
 }
-
-
-
-
-
