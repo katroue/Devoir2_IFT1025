@@ -126,7 +126,7 @@ public class JavaCLient {
                         System.out.println("Cette option n'est pas disponible");
                         break;
                     }
-                    System.out.println("Les cours offerts pendant pour cette session sont:");
+                    System.out.println("Les cours offerts pour cette session sont:");
                     coursesObject.forEach((course) -> System.out.println("- " + course.getName() + "\t" +
                             course.getCode()));
                     break;
@@ -134,7 +134,7 @@ public class JavaCLient {
                 } else if (choiceEvent == 2) {
                     stepEvent = "Inscription";
                 } else {
-                    System.out.println("Veuillez entrer un option valide.");
+                    System.out.println("Veuillez entrer une option valide.");
                     stepEvent = "Choix d'action";
                 }
 
@@ -160,7 +160,7 @@ public class JavaCLient {
                 System.out.println("Veuillez saisir votre email: ");
                 String emailStudent = scanner.nextLine();
                 while (!emailStudent.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) { // On attend que l'entrée soit valide
-                    System.out.println("Veuillez rentrer un email valide");
+                    System.out.println("Veuillez entrer un email valide");
                     emailStudent = scanner.nextLine();;
                 }
                 infoStudent.add(emailStudent);
@@ -178,7 +178,7 @@ public class JavaCLient {
                 ArrayList<String> codeCours = new ArrayList<>();
                 coursesObject.forEach((course) -> codeCours.add(course.getCode()));
 
-                System.out.println("Veuillez saisir le code du cour: ");
+                System.out.println("Veuillez saisir le code du cours: ");
                 String codeCourseRegistered = scanner.nextLine();
 
                 while (!codeCours.contains(codeCourseRegistered)) { // On attend que l'entrée soit valide

@@ -1,4 +1,4 @@
-package client;
+package applicationGui;
 
 import javafx.application.Application;
 import javafx.collections.FXCollections;
@@ -11,6 +11,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.event.EventHandler;
 import server.models.Course;
@@ -25,13 +26,39 @@ import java.util.ArrayList;
 
 
 public class clientFx extends Application {
+    VBox leftVBox;
+    TextArea txtArea;
+    Scene scene;
+    Button btnCharger;
+    TextField nameField;
+    TextField nomFamilleT;
 
-    public static void main(String[] args) throws IOException {
+    TextField emailField;
+
+    TextField matriculeT;
+
+
+
+
+
+
+    /**
+     * La classe main permet de "rouler" le code
+     * @param args L'argument est écrit par défaut, la méthode main ne prend pas d'argument
+     */
+    public static void main(String[] args)  {
         launch(args);
     }
 
+    /**
+     *La classe start décrit l'interface javaFx
+     * @param primaryStage Le paramètre stage est implanté par défaut dans javaFX
+     * @throws IOException L'exception est là pour attraper les cas où l'input est nul
+     * @throws ClassNotFoundException lance une exception si la méthode ne peut trouver la méthode processCommandLine ou
+     *      * alertHandlers
+     */
     @Override
-    public void start(Stage primaryStage) throws IOException, ClassNotFoundException {
+        public void start(Stage primaryStage) throws IOException, ClassNotFoundException {
         // Create a label for the left region & Create a VBox to hold the left region content
         Label leftLabel = new Label(" Liste des cours ");
         VBox leftVBox = new VBox(leftLabel);
@@ -59,6 +86,12 @@ public class clientFx extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
     }
+
+    /**
+     * La classe ajout texte est la pour définir l'interface usager, avec ses caractéristiques
+     * @param box1 Le paramètre box1 décrit la scene à droite avec toutes les ajouts pour la personnaliser
+     */
+
     public void ajoutTexte(VBox box1){
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(10, 10, 10, 10));
@@ -93,6 +126,14 @@ public class clientFx extends Application {
         // vBox.getChildren().add(newPane);
         box1.getChildren().add(gridPane);
     }
+
+    /**
+     * La classe saisonSelection décrit le coté gauche de la scene ,avec le choix de semestre
+     * @param box2 Le paramètre box2 est le coté gauche de la scene, vu qu'il est différent du coté droit et qu'ils n'ont pas les mêmes fonctionnalités
+     * @throws IOException L'exception est là pour attraper les cas où l'input est nul
+     * @throws ClassNotFoundException lance une exception si la méthode ne peut trouver la méthode processCommandLine ou
+     *      *      * alertHandlers
+     */
     public void saisonSelection(VBox box2) throws IOException, ClassNotFoundException {
 
         ObservableList<String> choices = FXCollections.observableArrayList(
@@ -118,8 +159,26 @@ public class clientFx extends Application {
 
         //Event handlers
 
-        //return btnCharger.setOnAction(new EventHandler<ActionEvent>());
+        btnCharger.setOnAction((event)-> {
+            try {
+                handle("CHARGER", comboBox.getValue());
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException(e);
+            }
+        });
     }
+    /**
+     *
+     * @param actionEvent action que l'usager fait en cliquant sur le bouton charger/inscrire
+     * @param choiceSession Le paramètre choiceSession est la session qui a été choisie
+     * @throws IOException L'exception est là pour attraper les cas où l'input est nul
+     * @throws ClassNotFoundException lance une exception si la méthode ne peut trouver la méthode processCommandLine ou
+     *      *      * alertHandlers
+     */
+
+
     public void handle(String actionEvent, String choiceSession) throws IOException, ClassNotFoundException {
         Socket clientFxSocket = new Socket("127.0.0.1", 1337);
 
@@ -134,14 +193,44 @@ public class clientFx extends Application {
 
             ArrayList<server.models.Course> coursesObject = (ArrayList<Course>) ois.readObject();
 
+            ArrayList<String> lineCourses = new ArrayList<>();
+            coursesObject.forEach((courses)->System.out.println(courses.getName()));
+
+            //Scene scene = btnCharger.getScene();
+            //VBox leftVBox = (VBox) scene.lookup("#leftVBox");
+
+            coursesObject.forEach((courses)-> lineCourses.add(courses.getName() + " " + courses.getCode() + "/n"));
+            lineCourses.forEach((stringCourses)-> leftVBox.getChildren().add(new Text(stringCourses)));
+
         } else if (actionEvent == "INSCRIRE") {
+
             oos.writeObject("INSCRIRE");
             oos.flush();
 
+            String prenom = nameField.getText();
+            String email = emailField.getText();
+            String nom = nomFamilleT.getText();
+            String matricule = matriculeT.getText();
+
+            String newRegistrationForm = prenom + " " + nom + " " + email +
+                    " " + matricule + " " + nom + " " + courseRegistrationCode + " " +
+                    courseRegistrationSession;
+
+
+//Comme nous n'avons pas pu afficher l'information du serveur que nous avons importée
+// nous ne pouvons pas envoyer le choix de cours choisi par l'usager, mais c'est comme
+// cela qu'on aurait procédé si on avait pu, en transfomant l'information en une string
+// comme dans la tâche 2.
+
+
+            oos.writeObject(newRegistrationForm);
+            oos.flush();
         }
     }
 }
 
 
-
+//Lorsqu'on essaie de rouler l'application, on obtient le code d'erreur "Cannot invoke "javafx.scene.control.Button.getScene()" because "this.btnCharger" is null" pour le bouton
+// charger mais aussi pour la VBox. On pense que cela vient du fait que nos méthodes sont séparées et ne sont pas dans
+// sous la méthode main, c'est pour ça que les variables sont dites "vides".
 
