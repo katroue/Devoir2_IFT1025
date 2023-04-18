@@ -105,8 +105,6 @@ public class JavaCLient {
                             course.getCode()));
 
 
-                    // On obtient les informations de l'étudiant pour l'inscription au cours
-
                     scanner.nextLine();
                     String newChoiceSession = scanner.nextLine();
                     if (Objects.equals(choiceSession, "1")) {
@@ -139,44 +137,45 @@ public class JavaCLient {
                     System.out.println("Veuillez entrer un option valide.");
                     stepEvent = "Choix d'action";
                 }
-                // On obtient les informations de l'étudiant pour l'inscription au cours
 
+                // On obtient les informations de l'étudiant pour l'inscription au cours
             case "Inscription":
                 System.out.println("Veuillez saisir votre prénom: ");
                 scanner.nextLine(); // Pour ne pas lire le "/n" du nextInt() précédent
                 String surnameStudent = scanner.nextLine();
                 while (surnameStudent.matches(".*\\d.*")) { // On attend que l'entrée soit valide
-                    System.out.println("Le prénom ne peut pas contenir un nombre");
+                    System.out.println("Le prénom ne peut pas contenir un nombre. Veuillez réessayer.");
+                    surnameStudent = scanner.nextLine();
                 }
                 infoStudent.add(surnameStudent);
          
                 System.out.println("Veuillez saisir votre nom: ");
                 String nameStudent = scanner.nextLine();
                 while (nameStudent.matches(".*\\d.*")) { // On attend que l'entrée soit valide
-                    System.out.println("Le nom ne peut pas contenir un nombre");
+                    System.out.println("Le nom ne peut pas contenir un nombre. Veuillez réessayer.");
+                    nameStudent = scanner.nextLine();
                 }
                 infoStudent.add(nameStudent);
                 
                 System.out.println("Veuillez saisir votre email: ");
                 String emailStudent = scanner.nextLine();
-                while (emailStudent.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$") == false) { // On attend que l'entrée soit valide
+                while (!emailStudent.matches("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$")) { // On attend que l'entrée soit valide
                     System.out.println("Veuillez rentrer un email valide");
+                    emailStudent = scanner.nextLine();;
                 }
                 infoStudent.add(emailStudent);
                 
                 System.out.println("Veuillez saisir votre matricule: ");
                 String matriculeStudent = scanner.nextLine();
 
-                while (matriculeStudent.matches("[0-9]{2,}") == false) { // On attend que l'entrée soit valide
-
-                if (matriculeStudent.matches("[0-9]{2,}")) {
-                    infoStudent.add(matriculeStudent);
-                } else {
-
+                while (!matriculeStudent.matches("[0-9]{2,}")) { // On attend que l'entrée soit valide
                     System.out.println("Veuillez rentrer un matricule valide");
-                   
+                    matriculeStudent = scanner.nextLine();
                 }
-                }
+
+                infoStudent.add(matriculeStudent);
+
+
                 infoStudent.add(matriculeStudent);
                 
                 System.out.println("Veuillez saisir le code du cour: ");
@@ -187,26 +186,26 @@ public class JavaCLient {
                 }
                 infoStudent.add(codeCourseRegistered);
 
-        for (int i = 0; i < coursesObject.size(); i++) {
-            if (Objects.equals(infoStudent.get(4), coursesObject.get(i).getCode())) {
-                String courseRegistrationName = coursesObject.get(i).getName();
-                String courseRegistrationCode = coursesObject.get(i).getCode();
-                String courseRegistrationSession = coursesObject.get(i).getSession();
-                String newRegistrationForm = infoStudent.get(0) + " " + infoStudent.get(1) + " " + infoStudent.get(2) +
-                " " + infoStudent.get(3) + " " + courseRegistrationName + " " + courseRegistrationCode + " " +
-                        courseRegistrationSession;
+                for (Course course : coursesObject) {
+                    if (Objects.equals(infoStudent.get(4), course.getCode())) {
+                        String courseRegistrationName = course.getName();
+                        String courseRegistrationCode = course.getCode();
+                        String courseRegistrationSession = course.getSession();
+                        String newRegistrationForm = infoStudent.get(0) + " " + infoStudent.get(1) + " " + infoStudent.get(2) +
+                                " " + infoStudent.get(3) + " " + courseRegistrationName + " " + courseRegistrationCode + " " +
+                                courseRegistrationSession;
 
-                // On envoie la commande qu'on veut l'action d'inscrire
-                String commande = "INSCRIRE arg";
-                oos.writeObject(commande);
-                oos.flush();
+                        // On envoie la commande qu'on veut l'action d'inscrire
+                        String commande = "INSCRIRE arg";
+                        oos.writeObject(commande);
+                        oos.flush();
 
 
-                // On envoie la ligne du formulaire d'inscription rempli
-                oos.writeObject(newRegistrationForm);
-                oos.flush();
-                System.out.println("Félicitation! Inscription réussie de " + infoStudent.get(0) + " au cours " +
-                                    courseRegistrationCode);
+                        // On envoie la ligne du formulaire d'inscription rempli
+                        oos.writeObject(newRegistrationForm);
+                        oos.flush();
+                        System.out.println("Félicitation! Inscription réussie de " + infoStudent.get(0) + " au cours " +
+                                courseRegistrationCode);
 
                         // On envoie le formulaire d'inscription rempli
                         oos.writeObject(newRegistrationForm);
@@ -216,10 +215,16 @@ public class JavaCLient {
 
 
                     }
-                }scanner.close();
+                }
+        scanner.close();
         oos.close();
         ois.close();
         clientSocket.close();
         }
     }
 }
+
+
+
+
+
